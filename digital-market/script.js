@@ -349,6 +349,155 @@ if (filterBtns.length > 0) {
                             businessRegistration.style.display = "block";
                         }
                     });
+                    // Consolidated JavaScript for Bowen Marketplace Animations
+document.addEventListener('DOMContentLoaded', function() {
+    // Function to check if element is in viewport
+    function isInViewport(element) {
+      const rect = element.getBoundingClientRect();
+      return (
+        rect.top <= (window.innerHeight || document.documentElement.clientHeight) * 0.8 &&
+        rect.bottom >= 0
+      );
+    }
+    
+    // ===== Mission and Vision Card Animations =====
+    function animateInfoCards() {
+      const cards = document.querySelectorAll('.info-card');
+      
+      cards.forEach(card => {
+        if (isInViewport(card) && !card.classList.contains('animated')) {
+          card.classList.add('animated');
+        }
+      });
+    }
+    
+    // Add hover effect for info card icons
+    const cardIcons = document.querySelectorAll('.card-icon');
+    
+    cardIcons.forEach(icon => {
+      icon.addEventListener('mouseenter', function() {
+        const iconElement = this.querySelector('i');
+        iconElement.style.transform = 'scale(1.2)';
+        iconElement.style.transition = 'transform 0.3s ease';
+      });
+      
+      icon.addEventListener('mouseleave', function() {
+        const iconElement = this.querySelector('i');
+        iconElement.style.transform = 'scale(1)';
+      });
+    });
+    
+    // ===== How It Works Section Animations =====
+    // Animation for sections on scroll
+    const animateOnScroll = () => {
+      const elements = [
+        ...document.querySelectorAll('.vision-card'),
+        ...document.querySelectorAll('.step-card')
+      ];
+      
+      elements.forEach((element, index) => {
+        if (isInViewport(element) && !element.classList.contains('animated')) {
+          setTimeout(() => {
+            element.classList.add('animated');
+          }, index * 150); // Staggered animation
+        }
+      });
+    };
+    
+    // Enhance mission/vision icons with animation
+    const enhanceIcons = () => {
+      // Replace static icons with animated versions
+      const missionIcon = document.querySelector('.mission-icon i');
+      const visionIcon = document.querySelector('.vision-icon i');
+      
+      if (missionIcon) {
+        missionIcon.className = 'fas fa-rocket';
+        
+        // Add subtle animation
+        setInterval(() => {
+          missionIcon.classList.add('fa-shake');
+          setTimeout(() => {
+            missionIcon.classList.remove('fa-shake');
+          }, 1000);
+        }, 5000);
+      }
+      
+      if (visionIcon) {
+        visionIcon.className = 'fas fa-lightbulb';
+        
+        // Add subtle animation
+        setInterval(() => {
+          visionIcon.classList.add('fa-pulse');
+          setTimeout(() => {
+            visionIcon.classList.remove('fa-pulse');
+          }, 1000);
+        }, 4000);
+      }
+    };
+    
+    enhanceIcons();
+    
+    // Add mouseover effects to step cards
+    const stepCards = document.querySelectorAll('.step-card');
+    stepCards.forEach(card => {
+      card.addEventListener('mouseover', function() {
+        const number = this.querySelector('.step-number');
+        if (number) {
+          number.style.transform = 'scale(1.1) rotate(10deg)';
+          
+          setTimeout(() => {
+            number.style.transform = 'scale(1) rotate(0deg)';
+          }, 300);
+        }
+      });
+    });
+
+    const animateNumbers = () => {
+      const stepNumbers = document.querySelectorAll('.step-number');
+      
+      stepNumbers.forEach((number, index) => {
+        const finalNumber = index + 1;
+        let currentNumber = 0;
+        const duration = 1500; // ms
+        const interval = 100;
+        const steps = duration / interval;
+        const increment = finalNumber / steps;
+        
+        const counter = setInterval(() => {
+          currentNumber += increment;
+          if (currentNumber >= finalNumber) {
+            currentNumber = finalNumber;
+            clearInterval(counter);
+          }
+          number.textContent = Math.floor(currentNumber);
+        }, interval);
+      });
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          if (entry.target.classList.contains('steps-grid')) {
+            animateNumbers();
+          }
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    
+    const stepsGrid = document.querySelector('.steps-grid');
+    if (stepsGrid) {
+      observer.observe(stepsGrid);
+    }
+    
+    animateInfoCards();
+    animateOnScroll();
+    
+    window.addEventListener('scroll', function() {
+      animateInfoCards();
+      animateOnScroll();
+    });
+  });
                     
                     document.addEventListener("DOMContentLoaded", function () {
                         gsap.from(".hero-content h1", { duration: 1, y: 50, opacity: 0, ease: "power3.out" });
