@@ -38,10 +38,11 @@
                 <h2><span>Discover</span> CampusVendors</h2>
 
                 <p>Connect with trusted beauty professionals, businesses, and student entrepreneurs.</p>
-                <div class="search-bar">
-                    <input type="text" placeholder="Search for vendors or services...">
-                    <button class="search-btn">Search</button>
-                </div>
+                <form id="searchForm">
+                <input type="text" id="searchInput" placeholder="Search vendors..." required />
+                <button type="submit" class="search-button">Search</button>
+                </form>
+                <div id="vendorResults"></div>
             </div>
         </div>
     </section>
@@ -111,7 +112,7 @@
                                 <i class="fas fa-star"></i>
                                 <i class="fas fa-star"></i>
                                 <i class="fas fa-star"></i>
-                          s      <i class="far fa-star"></i>
+                                <i class="far fa-star"></i>
                                 <span>4.0 (16)</span>
                             </div>
                             <p>Enhancing your eyelashes with extensions or cluster lashes.</p>
@@ -296,6 +297,45 @@
             </form>
         </div>
     </div>
+    <script>
+//render vendors grid for everyone
+document.addEventListener("DOMContentLoaded", ()=>{
+  const grid = document.querySelector(".vendors-grid");
+  if(!grid) return;
+
+  grid.innerHTML = ""; // clear the hard-coded sample cards
+
+  //saves a central “index” every time a vendor hits SAVE
+  const all = JSON.parse(localStorage.getItem("vendorsIndex")||"[]");
+
+  if(all.length===0){
+     grid.innerHTML = "<p>No vendors published yet.</p>";
+     return;
+  }
+
+  all.forEach(v=>{
+     const card = document.createElement("div");
+     card.className = "vendor-card";
+     card.setAttribute("data-category", v.category.toLowerCase());
+
+     card.innerHTML = `
+        <div class="vendor-image">
+           <img src="${v.imageUrl}" alt="${v.businessName}">
+           <div class="vendor-badge">${v.category}</div>
+        </div>
+        <div class="vendor-details">
+          <h3>${v.businessName}</h3>
+          <p>${v.description.substring(0,80)}…</p>
+          <a class="btn-secondary"
+             href="vendor-profile.html?email=${encodeURIComponent(v.email)}">
+             View Profile
+          </a>
+        </div>`;
+     grid.appendChild(card);
+  });
+});
+</script>
+
     
     <script src="script.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
