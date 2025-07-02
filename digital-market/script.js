@@ -404,9 +404,7 @@ function readReviews(email) {
   return JSON.parse(localStorage.getItem(getReviewKey(email)) || "[]");
 }
 
-/* ------------------------------------------------------------------
-   3.  VENDOR DASHBOARD — store everything the vendor types
--------------------------------------------------------------------*/
+/* VENDOR DASHBOARD — store everything the vendor types*/
 document.addEventListener("DOMContentLoaded", () => {
   if (!document.getElementById("updateForm")) return;            // not on dashboard
 
@@ -455,12 +453,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-/* ------------------------------------------------------------------
-   4.  PUBLIC  vendor-profile.html   (anyone can open)
--------------------------------------------------------------------*/
+/* PUBLIC  vendor-profile.html */
 document.addEventListener("DOMContentLoaded", () => {
-  if (!document.getElementById("vendor-name")) return;           // not on profile page
-
+  if (!document.getElementById("vendor-name")) return;           
   // 4.1 Which vendor are we showing?
   const url   = new URL(location.href);
   const email = url.searchParams.get("email") || getCurrentEmail();
@@ -550,37 +545,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Show booking only for beauty category
-document.addEventListener("DOMContentLoaded", () => {
-  const category = document.getElementById("vendor-category").textContent.toLowerCase();
-  const bookingSection = document.getElementById("bookingSection");
-  const vendorId = localStorage.getItem("currentVendorId");
-
-  if (category.includes("hair") || category.includes("beauty") || category.includes("nail") || category.includes("makeup")) {
-    bookingSection.style.display = "block";
-  }
-
-  const bookingForm = document.getElementById("bookingForm");
-  bookingForm?.addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    const bookingsKey = `vendorBookings_${vendorId}`;
-    const existingBookings = JSON.parse(localStorage.getItem(bookingsKey)) || [];
-
-    const newBooking = {
-      name: document.getElementById("appointmentName").value.trim(),
-      date: document.getElementById("appointmentDate").value,
-      time: document.getElementById("appointmentTime").value,
-      note: document.getElementById("appointmentNote").value.trim(),
-      status: "Pending"
-    };
-
-    existingBookings.push(newBooking);
-    localStorage.setItem(bookingsKey, JSON.stringify(existingBookings));
-    alert("Booking sent! Vendor will confirm shortly.");
-    bookingForm.reset();
-  });
-});
 // TODO: Replace localStorage with real backend POST request when API is ready
 localStorage.setItem("vendors", JSON.stringify([
   { id: 1, name: "Glam Squad", category: "Beauty Professionals" },

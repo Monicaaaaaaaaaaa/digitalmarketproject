@@ -14,7 +14,6 @@
 
 <main class="vendor-profile-container">
 
-  <!-- ===== hero / details ================================================= -->
   <section class="vendor-details fade-in">
     <img id="vendor-image" src="default-vendor.jpg" alt="Vendor banner"/>
     <p><strong>Email:</strong> <span id="vendor-email"> </span></p>
@@ -29,9 +28,30 @@
 </section>
 
   <!-- === optional booking button (just a demo) ============================ -->
-  <section class="call-to-action fade-in" id="bookingCTA" style="display:none">
-    <a href="#contactForm" class="btn-primary">Contact this vendor</a>
-  </section>
+<!-- Booking Trigger Button (shown only for beauty vendors) -->
+<section class="fade-in" id="bookingTrigger" style="display: none; margin-top: 30px;">
+  <button id="showBookingBtn" class="btn-primary">Book Appointment</button>
+</section>
+
+<!-- Booking Form Section (hidden by default) -->
+<section class="vendor-booking fade-in" id="bookingSection" style="display: none;">
+  <h3>Book an Appointment</h3>
+  <form id="bookingForm">
+    <label for="appointmentName">Your Name:</label>
+    <input type="text" id="appointmentName" required />
+
+    <label for="appointmentDate">Date:</label>
+    <input type="date" id="appointmentDate" required />
+
+    <label for="appointmentTime">Time:</label>
+    <input type="time" id="appointmentTime" required />
+
+    <label for="appointmentNote">Note (optional):</label>
+    <textarea id="appointmentNote" placeholder="Describe the service or any notes..."></textarea>
+
+    <button type="submit" class="btn-primary">Book Now</button>
+  </form>
+</section>
 
   <!-- === simple contact form – only for signed-in customers  ============== -->
   <section id="contactFormSection" class="fade-in">
@@ -73,16 +93,14 @@
 </section>
 
 </main>
-
 <script>
-
 document.getElementById("darkToggle").onclick = () =>
   document.body.classList.toggle("dark-mode");
 
-// Load & render vendor info 
 document.addEventListener("DOMContentLoaded", () => {
   const qsEmail = new URLSearchParams(location.search).get("email");
   const email = qsEmail || localStorage.getItem("userEmail");
+  const el = id => document.getElementById(id);
 
   if (!email) {
     alert("No vendor specified");
@@ -90,13 +108,53 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  const data = JSON.parse(localStorage.getItem(`vendorData_${email}`));
+  let data = JSON.parse(localStorage.getItem(`vendorData_${email}`));
+
+  // Fallback hardcoded vendors
+  if (!data) {
+    const fallbackProfiles = {
+      "glamsquad@example.com": {
+        businessName: "Glam Squad",
+        phone: "09012345678",
+        category: "Beauty Professionals",
+        description: "Professional makeup, hair styling, and nail services.",
+        imageUrl: "images/placeholder",
+        services: [
+          { name: "Makeup", image: "images/placeholder", price: "5000" },
+          { name: "Hair Styling", image: "images/placeholder", price: "7000" }
+        ]
+      },
+       "campusthreads@example.com": {
+        businessName: "Campus Threads",
+        phone: "08123456789",
+        category: "Fashion",
+        description: "Trendy clothing and accessories for students.",
+        imageUrl: "images/placeholder",
+        services: [
+          { name: "Hoodies", image: "images/placeholder", price: "7000" },
+          { name: "Jeans", image: "images/placeholder", price: "6000" }
+        ]
+      },
+      "lashes@example.com": {
+        businessName: "Lashes Extensions",
+        phone: "08099887766",
+        category: "Lashes",
+        description: "Enhancing your eyelashes with extensions or cluster lashes.",
+        imageUrl: "images/placeholder",
+        services: [
+          { name: "Lash Extensions", image: "images/placeholder", price: "3500" }
+        ]
+      }
+    };
+    data = fallbackProfiles[email];
+  }
+
   if (!data) {
     alert("Vendor has not set up a profile.");
     return;
   }
 
-  const el = id => document.getElementById(id);
+  // Populate basic info
   el("vendor-name").textContent = data.businessName || "Vendor";
   el("vendor-email").textContent = email;
   el("vendor-phone").textContent = data.phone || "—";
@@ -104,6 +162,10 @@ document.addEventListener("DOMContentLoaded", () => {
   el("vendor-description").textContent = data.description || "";
   el("vendor-image").src = data.imageUrl || "default-vendor.jpg";
 
+  const vendorId = email;
+  localStorage.setItem("currentVendorId", vendorId);
+
+  // Display services with price
   if (Array.isArray(data.services) && data.services.length) {
     const container = document.getElementById("servicesList");
     data.services.forEach(service => {
@@ -111,21 +173,66 @@ document.addEventListener("DOMContentLoaded", () => {
       card.className = "service-card";
       card.innerHTML = `
         <img src="${service.image || 'default-service.jpg'}" alt="${service.name}">
-        <div class="service-info"><p>${service.name}</p></div>
+        <div class="service-info">
+          <p>${service.name}</p>
+          <strong>₦${service.price || "—"}</strong>
+        </div>
       `;
       container.appendChild(card);
     });
     document.getElementById("servicesBlock").style.display = "block";
-    document.getElementById("bookingCTA").style.display="block";
   }
-});
 
-//demo “contact” handler
-document.getElementById("contactForm").addEventListener("submit",e=>{
-  e.preventDefault();
-  alert("Message sent – demo only.");
-  e.target.reset();
+  // Show booking section if beauty-related
+  const category = (data.category || "").toLowerCase();
+  const bookingTrigger = document.getElementById("bookingTrigger");
+  const bookingSection = document.getElementById("bookingSection");
+
+  if (
+    category.includes("beauty") ||
+    category.includes("hair") ||
+    category.includes("makeup") ||
+    category.includes("nail") ||
+    category.includes("lash")
+  ) {
+    bookingTrigger.style.display = "block";
+    document.getElementById("showBookingBtn").addEventListener("click", () => {
+      bookingSection.style.display = "block";
+      bookingTrigger.style.display = "none";
+      bookingSection.scrollIntoView({ behavior: "smooth" });
+    });
+  }
+
+  // Contact form demo
+  document.getElementById("contactForm").addEventListener("submit", e => {
+    e.preventDefault();
+    alert("Message sent – demo only.");
+    e.target.reset();
+  });
+
+  // Booking form demo
+  const bookingForm = document.getElementById("bookingForm");
+  bookingForm?.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const bookingsKey = `vendorBookings_${vendorId}`;
+    const existingBookings = JSON.parse(localStorage.getItem(bookingsKey)) || [];
+
+    const newBooking = {
+      name: document.getElementById("appointmentName").value.trim(),
+      date: document.getElementById("appointmentDate").value,
+      time: document.getElementById("appointmentTime").value,
+      note: document.getElementById("appointmentNote").value.trim(),
+      status: "Pending"
+    };
+
+    existingBookings.push(newBooking);
+    localStorage.setItem(bookingsKey, JSON.stringify(existingBookings));
+    alert("Booking sent! Vendor will confirm shortly.");
+    bookingForm.reset();
+  });
 });
 </script>
 </body>
 </html>
+

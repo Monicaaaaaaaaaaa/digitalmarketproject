@@ -1388,7 +1388,24 @@ header {
   text-align: center;
   padding: 2rem 0 0;
 }
+.btn-primary {
+  display: inline-block;
+  padding: 0.6rem 1.4rem;
+  background-color: var(--primary-color, #064273);
+  color: #fff;
+  border: none;
+  border-radius: var(--border-radius, 8px);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
 
+.btn-primary:hover {
+  background-color: #042f54;
+}
 #vendor-name {
   font-size: 2.5rem;
   color: var(--primary-color);
@@ -1712,34 +1729,6 @@ body.dark-mode .vendor-dashboard-container .vendor-reviews .review {
   display: none !important;
 }
 
-.vendor-appointments {
-  background: var(--bg-light);
-  padding: 2rem;
-  border-radius: 12px;
-  margin-top: 2rem;
-  box-shadow: var(--box-shadow);
-}
-
-.appointments-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.appointment-card {
-  background: #fff;
-  border-left: 4px solid var(--primary-color);
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: var(--box-shadow);
-}
-
-.appointment-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .status {
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
@@ -1761,90 +1750,6 @@ body.dark-mode .vendor-dashboard-container .vendor-reviews .review {
   background-color: #dc3545;
   color: #fff;
 }
-
-.appointment-actions {
-  margin-top: 1rem;
-}
-
-.appointment-actions button {
-  margin-right: 1rem;
-  padding: 6px 12px;
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.appointment-actions button:nth-child(2) {
-  background-color: #dc3545;
-}
-
-/* Appointment Booking Styling */
-.appointment-section {
-  margin-top: 2rem;
-  background: var(--background-color, #f9f9f9);
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.appointment-section h3 {
-  font-size: 1.5rem;
-  margin-bottom: 1.2rem;
-  color: var(--text-color, #333);
-}
-
-#appointmentForm {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-}
-
-#appointmentForm label {
-  font-weight: 600;
-  color: var(--text-color, #333);
-}
-
-#appointmentForm input,
-#appointmentForm textarea {
-  padding: 0.8rem 1rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  outline: none;
-  background-color: #fff;
-  transition: border-color 0.2s;
-}
-
-#appointmentForm input:focus,
-#appointmentForm textarea:focus {
-  border-color: var(--primary-color, #007bff);
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-}
-
-#appointmentForm textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-
-#appointmentForm .btn-primary {
-  padding: 0.9rem;
-  font-size: 1rem;
-  font-weight: bold;
-  color: #fff;
-  background-color: var(--primary-color, #007bff);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-#appointmentForm .btn-primary:hover {
-  background-color: #0056b3;
-}
-
-/* Vendor Profile – Services Offered & Booking*/
 
 /* Services Offered Section */
 .vendor-services {
@@ -1921,127 +1826,3 @@ body.dark-mode .vendor-dashboard-container .vendor-reviews .review {
   font-size: 0.9rem;
 }
 
-/* Vendor Profile – Appointment Section */
-.appointment-section {
-  background: #fff;
-  padding: 2rem 1.2rem;
-  margin-top: 2rem;
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-}
-
-.appointment-section h3 {
-  font-size: 1.6rem;
-  margin-bottom: 1.2rem;
-  color: var(--primary-color);
-  text-align: center;
-}
-
-#appointmentForm {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem 1.5rem;
-}
-
-#appointmentForm label {
-  grid-column: span 2;
-  font-weight: 500;
-  color: var(--text-color);
-}
-
-#appointmentForm input,
-#appointmentForm textarea {
-  grid-column: span 2;
-  padding: 0.8rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: var(--border-radius);
-  font-size: 1rem;
-  transition: border-color 0.2s;
-}
-
-#appointmentForm input:focus,
-#appointmentForm textarea:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(42,85,255,0.1);
-}
-
-#appointmentForm textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-
-#appointmentForm .btn-primary {
-  grid-column: span 2;
-  justify-self: center;
-  padding: 0.8rem 2rem;
-  font-size: 1rem;
-  font-weight: 600;
-  margin-top: 1rem;
-}
-
-/* Responsive tweak for appointment form */
-@media (max-width: 600px) {
-  #appointmentForm {
-    grid-template-columns: 1fr;
-  }
-  #appointmentForm label,
-  #appointmentForm input,
-  #appointmentForm textarea,
-  #appointmentForm .btn-primary {
-    grid-column: span 1;
-  }
-}
-.product-contact, .vendor-products {
-  background:#fff;
-  padding:2rem 1.2rem;
-  margin-top:2rem;
-  border-radius:var(--border-radius);
-  box-shadow:var(--box-shadow);
-}
-.product-contact h3,
-.vendor-products h3 { text-align:center; color:var(--primary-color); margin-bottom:1.2rem; }
-#productContactForm { display:flex; flex-direction:column; gap:1rem; max-width:500px; margin:0 auto; }
-#productContactForm input, #productContactForm textarea {
-  padding:0.8rem 1rem; border:1px solid #ccc; border-radius:var(--border-radius);
-}
-
-body {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  background: #f7f9fc;
-  color: #333;
-}
-
-.dashboard-container {
-  max-width: 700px;
-  margin: auto;
-  background: white;
-  padding: 25px;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-}
-
-h1, h2 {
-  color: #064273;
-}
-
-.section {
-  margin-bottom: 30px;
-}
-
-ul {
-  padding-left: 20px;
-}
-
-button {
-  padding: 10px 20px;
-  background: #064273;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-button:hover {
-  background: #042f54;
-}

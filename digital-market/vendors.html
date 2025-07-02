@@ -32,98 +32,93 @@
         </div>
     </nav>
 
-    <section class="vendor-hero">
-        <div class="container">
-            <div class="vendor-hero-content">
-                <h2><span>Discover</span> CampusVendors</h2>
+<section class="vendor-hero">
+    <div class="container">
+      <div class="vendor-hero-content">
+        <h2><span>Discover</span> CampusVendors</h2>
+        <p>Connect with trusted beauty professionals, businesses, and student entrepreneurs.</p>
+        <form id="searchForm">
+          <input type="text" id="searchInput" placeholder="Search vendors..." required />
+          <button type="submit" class="search-button">Search</button>
+        </form>
+        <div id="vendorResults"></div>
+      </div>
+    </div>
+  </section>
 
-                <p>Connect with trusted beauty professionals, businesses, and student entrepreneurs.</p>
-                <form id="searchForm">
-                <input type="text" id="searchInput" placeholder="Search vendors..." required />
-                <button type="submit" class="search-button">Search</button>
-                </form>
-                <div id="vendorResults"></div>
+  <!-- Vendors Section -->
+  <section class="vendors" id="vendors">
+    <div class="container">
+      <div class="section-header">
+        <h2>Our Vendors</h2>
+        <p>Discover businesses around campus</p>
+      </div>
+
+      <div class="vendor-filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="beauty">Beauty Professionals</button>
+        <button class="filter-btn" data-filter="ecommerce">E-commerce</button>
+      </div>
+
+      <div class="vendors-grid">
+        <!-- Hardcoded Cards -->
+        <div class="vendor-card" data-category="beauty">
+          <div class="vendor-image">
+            <img src="images/placeholder" alt="Beauty salon" />
+            <div class="vendor-badge">Beauty</div>
+          </div>
+          <div class="vendor-details">
+            <h3>Glam Squad</h3>
+            <div class="vendor-rating">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+              <i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+              <span>4.5 (28)</span>
             </div>
+            <p>Professional makeup, hair styling, and nail services.</p>
+            <a href="vendor-profile.html?email=glamsquad@example.com">View Profile</a>
+          </div>
         </div>
-    </section>
 
-    <section class="vendors" id="vendors">
-        <div class="container">
-            <div class="section-header">
-                <h2>Our Vendors</h2>
-                <p>Discover businesses around campus</p>
+        <div class="vendor-card" data-category="ecommerce">
+          <div class="vendor-image">
+            <img src="images/placeholder" alt="Fashion store" />
+            <div class="vendor-badge">Fashion</div>
+          </div>
+          <div class="vendor-details">
+            <h3>Campus Threads</h3>
+            <div class="vendor-rating">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+              <i class="fas fa-star"></i><i class="far fa-star"></i>
+              <span>4.0 (16)</span>
             </div>
-            <div class="vendor-filters">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="beauty">Beauty Professionals</button>
-                <button class="filter-btn" data-filter="ecommerce">E-commerce</button>
+            <p>Trendy clothing and accessories for students.</p>
+            <a href="vendor-profile.html?email=campusthreads@example.com">View Profile</a>
+          </div>
+        </div>
 
+        <div class="vendor-card" data-category="beauty">
+          <div class="vendor-image">
+            <img src="images/placeholder" alt="lashes" />
+            <div class="vendor-badge">Lashes</div>
+          </div>
+          <div class="vendor-details">
+            <h3>lashes Extensions, clusters</h3>
+            <div class="vendor-rating">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+              <i class="fas fa-star"></i><i class="far fa-star"></i>
+              <span>4.0 (16)</span>
             </div>
-            <div class="vendors-grid">
-                <div class="vendor-card" data-category="beauty">
-                    <div class="vendor-image">
-                        <img src="images/placeholder" alt="Beauty salon">
-                        <div class="vendor-badge">Beauty</div>
-                    </div>
-                    <div class="vendor-details">
-                        <h3>Glam Squad</h3>
-                        <div class="vendor-rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star-half-alt"></i>
-                            <span>4.5 (28)</span>
-                        </div>
-                        <p>Professional makeup, hair styling, and nail services.</p>
-                        <a href="vendor-profile.html" class="btn-secondary">View Profile</a>
-                    </div>
-                </div>
+            <p>Enhancing your eyelashes with extensions or cluster lashes.</p>
+            <a href="vendor-profile.html?email=lashes@example.com">View Profile</a>
+        </div>
 
-                <div class="vendor-card" data-category="ecommerce">
-                    <div class="vendor-image">
-                        <img src="images/placeholder" alt="Fashion store">
-                        <div class="vendor-badge">Fashion</div>
-                    </div>
-                    <div class="vendor-details">
-                        <h3>Campus Threads</h3>
-                        <div class="vendor-rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                           <i class="far fa-star"></i>
-                            <span>4.0 (16)</span>
-                        </div>
-                        <p>Trendy clothing and accessories for students.</p>
-                        <a href="vendor-profile.html" class="btn-secondary">View Profile</a>
-                    </div>
-                </div>
+        <div class="more-vendors">
+          <a href="#" class="btn-primary">View All Vendors</a>
+        </div>
+      </div>
+    </div>
+  </section>
 
-                <div class="vendor-card" data-category="beauty">
-                    <div class="vendor-image">
-                        <img src="images/placeholder" alt="lashes">
-                        <div class="vendor-badge">Lashes</div>
-                        </div>
-                        <div class="vendor-details">
-                            <h3>lashes Extentions, clusters</h3>
-                            <div class="vendor-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="far fa-star"></i>
-                                <span>4.0 (16)</span>
-                            </div>
-                            <p>Enhancing your eyelashes with extensions or cluster lashes.</p>
-                            <a href="vendor-profile.html" class="btn-secondary">View Profile</a>
-                        </div>
-                    </div>
-                    <div class="more-vendors">
-                        <a href="#" class="btn-primary">View All Vendors</a>
-                    </div>
-            </div>                
-    </section>
     
     <footer class="footer">
         <div class="container">
@@ -297,47 +292,46 @@
             </form>
         </div>
     </div>
-    <script>
-//render vendors grid for everyone
-document.addEventListener("DOMContentLoaded", ()=>{
-  const grid = document.querySelector(".vendors-grid");
-  if(!grid) return;
+<script>
+    // Render vendors grid for everyone
+    document.addEventListener("DOMContentLoaded", () => {
+      const grid = document.querySelector(".vendors-grid");
+      if (!grid) return;
 
-  grid.innerHTML = ""; // clear the hard-coded sample cards
+      // Get vendors from localStorage
+      const all = JSON.parse(localStorage.getItem("vendorsIndex") || "[]");
 
-  //saves a central “index” every time a vendor hits SAVE
-  const all = JSON.parse(localStorage.getItem("vendorsIndex")||"[]");
+      // If no dynamic vendors and grid is also empty (no hardcoded), show message
+      if (all.length === 0 && grid.children.length === 0) {
+        grid.innerHTML = "<p>No vendors published yet.</p>";
+        return;
+      }
 
-  if(all.length===0){
-     grid.innerHTML = "<p>No vendors published yet.</p>";
-     return;
-  }
+      // Append each dynamic vendor to the grid
+      all.forEach((v) => {
+        const card = document.createElement("div");
+        card.className = "vendor-card";
+        card.setAttribute("data-category", v.category.toLowerCase());
 
-  all.forEach(v=>{
-     const card = document.createElement("div");
-     card.className = "vendor-card";
-     card.setAttribute("data-category", v.category.toLowerCase());
+        card.innerHTML = `
+          <div class="vendor-image">
+            <img src="${v.imageUrl}" alt="${v.businessName}">
+            <div class="vendor-badge">${v.category}</div>
+          </div>
+          <div class="vendor-details">
+            <h3>${v.businessName}</h3>
+            <p>${v.description.substring(0, 80)}…</p>
+            <a class="btn-secondary"
+              href="vendor-profile.html?email=${encodeURIComponent(v.email)}">
+              View Profile
+            </a>
+          </div>`;
+        grid.appendChild(card);
+      });
+    });
+  </script>
 
-     card.innerHTML = `
-        <div class="vendor-image">
-           <img src="${v.imageUrl}" alt="${v.businessName}">
-           <div class="vendor-badge">${v.category}</div>
-        </div>
-        <div class="vendor-details">
-          <h3>${v.businessName}</h3>
-          <p>${v.description.substring(0,80)}…</p>
-          <a class="btn-secondary"
-             href="vendor-profile.html?email=${encodeURIComponent(v.email)}">
-             View Profile
-          </a>
-        </div>`;
-     grid.appendChild(card);
-  });
-});
-</script>
-
-    
-    <script src="script.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="script.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </body>
 </html>

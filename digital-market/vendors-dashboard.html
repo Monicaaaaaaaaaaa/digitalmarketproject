@@ -9,7 +9,7 @@
 <body>
 <header class="dashboard-header">
   <h1>Vendor Dashboard</h1>
-  <p>Logged in as : <span id="vendorEmail">loading…</span></p>
+  <p>Logged in as: <span id="vendorEmail">loading…</span></p>
   <button class="btn-secondary" onclick="logout()">Logout</button>
 </header>
 
@@ -49,7 +49,7 @@
     </form>
   </section>
 
-  <a href="vendor-profile.html" class="btn-secondary">👀 View Public Profile</a>
+  <a href="vendors-profile.html?email=" id="viewProfileBtn" class="btn-secondary">👀 View Public Profile</a>
 
   <section class="vendor-reviews">
     <h2>Customer Reviews</h2>
@@ -69,11 +69,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   document.getElementById("vendorEmail").textContent = email;
+  document.getElementById("viewProfileBtn").href = `vendors-profile.html?email=${email}`;
+
   const dataKey = `vendorData_${email}`;
   const existing = JSON.parse(localStorage.getItem(dataKey)) || {};
   const f = id => document.getElementById(id);
 
-  // Fill basic info
   f("businessName").value = existing.businessName || "";
   f("phone").value        = existing.phone        || "";
   f("category").value     = existing.category     || "";
@@ -84,7 +85,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const addServiceBtn = document.getElementById("addServiceBtn");
   let services = existing.services || [];
 
-  // Render existing services
   function renderServices() {
     servicesContainer.innerHTML = "";
     services.forEach((service, index) => {
@@ -97,6 +97,9 @@ document.addEventListener("DOMContentLoaded", () => {
         <label>Image URL
           <input type="url" class="service-image" data-index="${index}" value="${service.image || ""}" required>
         </label>
+        <label>Price (₦)
+          <input type="number" class="service-price" data-index="${index}" value="${service.price || ""}" required>
+        </label>
         <hr>
       `;
       servicesContainer.appendChild(div);
@@ -106,18 +109,18 @@ document.addEventListener("DOMContentLoaded", () => {
   renderServices();
 
   addServiceBtn.onclick = () => {
-    services.push({ name: "", image: "" });
+    services.push({ name: "", image: "", price: "" });
     renderServices();
   };
 
   document.getElementById("vendorForm").addEventListener("submit", e => {
     e.preventDefault();
 
-    // Collect updated services
     const updatedServices = Array.from(document.querySelectorAll(".service-name")).map((input, i) => {
       return {
         name: input.value.trim(),
-        image: document.querySelectorAll(".service-image")[i].value.trim()
+        image: document.querySelectorAll(".service-image")[i].value.trim(),
+        price: document.querySelectorAll(".service-price")[i].value.trim()
       };
     });
 
@@ -134,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
     alert("✅ Profile updated successfully!");
   });
 
-  // Show vendor reviews
+  // Load vendor reviews
   const reviews = JSON.parse(localStorage.getItem(`vendorReviews_${email}`)) || [];
   const reviewContainer = document.getElementById("vendorReviews");
 
