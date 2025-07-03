@@ -27,7 +27,6 @@
   <div id="servicesList" class="services-grid"></div>
 </section>
 
-  <!-- === optional booking button (just a demo) ============================ -->
 <!-- Booking Trigger Button (shown only for beauty vendors) -->
 <section class="fade-in" id="bookingTrigger" style="display: none; margin-top: 30px;">
   <button id="showBookingBtn" class="btn-primary">Book Appointment</button>
@@ -52,8 +51,6 @@
     <button type="submit" class="btn-primary">Book Now</button>
   </form>
 </section>
-
-  <!-- === simple contact form – only for signed-in customers  ============== -->
   <section id="contactFormSection" class="fade-in">
     <h3>Send a Message</h3>
     <form id="contactForm">
@@ -110,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let data = JSON.parse(localStorage.getItem(`vendorData_${email}`));
 
-  // Fallback hardcoded vendors
+  //hardcoded vendors
   if (!data) {
     const fallbackProfiles = {
       "glamsquad@example.com": {
@@ -153,8 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
     alert("Vendor has not set up a profile.");
     return;
   }
-
-  // Populate basic info
+  
   el("vendor-name").textContent = data.businessName || "Vendor";
   el("vendor-email").textContent = email;
   el("vendor-phone").textContent = data.phone || "—";

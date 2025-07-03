@@ -549,7 +549,6 @@ document.addEventListener("DOMContentLoaded", () => {
 localStorage.setItem("vendors", JSON.stringify([
   { id: 1, name: "Glam Squad", category: "Beauty Professionals" },
   { id: 2, name: "Trendy Curls", category: "Hair Stylist" },
-  // more vendors...
 ]));
 
 document.querySelector("#searchForm").addEventListener("submit", function (e) {
