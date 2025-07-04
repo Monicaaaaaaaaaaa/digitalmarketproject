@@ -218,57 +218,6 @@ document.querySelectorAll('form').forEach(form => {
     });
 });
 
-// SIGNUP FLOW + BUSINESS REGISTRATION
-document.addEventListener("DOMContentLoaded", function () {
-    const signupForm = document.getElementById("signupForm");
-    const businessRegistration = document.getElementById("business-registration");
-    let selectedUserType = "customer";
-
-    userTypes.forEach(selector => {
-        selector.addEventListener("click", function () {
-            userTypes.forEach(el => el.classList.remove("active"));
-            this.classList.add("active");
-            selectedUserType = this.getAttribute("data-type");
-            vendorFields.forEach(field => field.style.display = selectedUserType === "vendor" ? "block" : "none");
-        });
-    });
-
-    signupForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-
-        if (selectedUserType === "vendor") {
-            localStorage.setItem("vendorLoggedIn", "true");
-            localStorage.setItem("vendorName", document.getElementById("signupName").value);
-            localStorage.setItem("vendorEmail", document.getElementById("signupEmail").value);
-            localStorage.setItem("vendorPhone", document.getElementById("signupPhone").value);
-        }
-
-        closeModal(signupModal);
-        openModal(otpModal);
-        startOTPTimer();
-    });
-
-    document.getElementById("business-registration-form").addEventListener("submit", function (event) {
-        event.preventDefault();
-
-        const businessName = document.getElementById("business-name").value;
-        const category = document.getElementById("category").value;
-        const businessDescription = document.getElementById("business-description").value;
-
-        localStorage.setItem("vendorProfile", JSON.stringify({
-            name: businessName,
-            desc: businessDescription,
-            category: category
-        }));
-
-        window.location.href = "vendor-profile.html";
-    });
-
-    if (localStorage.getItem("vendorLoggedIn") === "true") {
-        businessRegistration.style.display = "block";
-    }
-});
-
 // SORT VENDORS
 document.addEventListener("DOMContentLoaded", function () {
     const sortDropdown = document.getElementById("sortOptions");
@@ -303,7 +252,6 @@ document.addEventListener("DOMContentLoaded", function () {
     gsap.from(".hero-content p", { duration: 1.2, y: 50, opacity: 0, ease: "power3.out", delay: 0.3 });
     gsap.from(".hero-buttons", { duration: 1.4, y: 30, opacity: 0, ease: "power3.out", delay: 0.6 });
 
-    // Info card scroll animations
     function isInViewport(el) {
         const rect = el.getBoundingClientRect();
         return rect.top <= (window.innerHeight * 0.8) && rect.bottom >= 0;
@@ -369,7 +317,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const vendorData = JSON.parse(localStorage.getItem(`vendorProfile_${vendorId}`)) || {};
   const reviews = JSON.parse(localStorage.getItem(`vendorReviews_${vendorId}`)) || [];
 
-  // Set vendor data in HTML
   document.getElementById("vendor-name").textContent = vendorData.name || "Vendor Name";
   document.getElementById("vendor-email").textContent = vendorData.email || "Not provided";
   document.getElementById("vendor-phone").textContent = vendorData.phone || "Not provided";
@@ -404,11 +351,9 @@ function readReviews(email) {
   return JSON.parse(localStorage.getItem(getReviewKey(email)) || "[]");
 }
 
-/* VENDOR DASHBOARD — store everything the vendor types*/
+/* VENDOR DASHBOARD*/
 document.addEventListener("DOMContentLoaded", () => {
-  if (!document.getElementById("updateForm")) return;            // not on dashboard
-
-  // 🔒 redirect if NOT the vendor
+  if (!document.getElementById("updateForm")) return;            
   if (localStorage.getItem(roleLSKey) !== "vendor") {
     alert("Please login as vendor first.");
     return (window.location.href = "index.html");
@@ -417,7 +362,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const email = getCurrentEmail();
   const stored = readVendorData(email);
 
-  // pre-fill any existing data
   ["businessNameInput","vendorPhone","vendorCategory","vendorDesc"]
     .forEach(id => { if(stored[id]) document.getElementById(id).value = stored[id]; });
 
@@ -430,7 +374,7 @@ document.addEventListener("DOMContentLoaded", () => {
       category     : document.getElementById("vendorCategory").value.trim(),
       description  : document.getElementById("vendorDesc").value.trim(),
       services     : document.getElementById("servicesComma").value
-                      .split(",").map(s=>s.trim()).filter(Boolean), // comma list → array
+                      .split(",").map(s=>s.trim()).filter(Boolean), 
       imageUrl     : stored.imageUrl || "default-vendor.jpg"
     };
 
@@ -453,86 +397,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-/* PUBLIC  vendor-profile.html */
-document.addEventListener("DOMContentLoaded", () => {
-  if (!document.getElementById("vendor-name")) return;           
-  // 4.1 Which vendor are we showing?
-  const url   = new URL(location.href);
-  const email = url.searchParams.get("email") || getCurrentEmail();
-  if (!email) return alert("No vendor specified!");
-
-  const data    = readVendorData(email);
-  const reviews = readReviews(email);
-
-  // 4.2 Render vendor core info
-  document.getElementById("vendor-name").textContent      = data.businessName || "Vendor";
-  document.getElementById("vendor-email").textContent     = email;
-  document.getElementById("vendor-phone").textContent     = data.phone || "";
-  document.getElementById("vendor-category").textContent  = data.category || "";
-  document.getElementById("vendor-description").textContent = data.description || "";
-  document.getElementById("vendor-image").src             = data.imageUrl || "default-vendor.jpg";
-
-  // 4.3 Services
-  const grid = document.getElementById("servicesGrid");
-  grid.innerHTML = "";
-  (data.services || []).forEach(name => {
-    const div = document.createElement("div");
-    div.className = "service-card";
-    div.innerHTML = `
-      <img src="${data.imageUrl}" alt="${name}">
-      <div class="service-info">
-        <p>${name}</p>
-        <a href="#appointmentSection" class="btn-secondary">Contact to Book</a>
-      </div>`;
-    grid.appendChild(div);
-  });
-
-  // 4.4 Render reviews
-  const out   = document.getElementById("review-list");
-  const avgEl = document.getElementById("average-rating");
-  function renderReviews() {
-    out.innerHTML = "";
-    if (!reviews.length) {
-      out.innerHTML = "<p>No reviews yet.</p>";
-      avgEl.textContent = "⭐ 0.0";
-      return;
-    }
-    let sum = 0;
-    reviews.forEach(r => {
-      sum += +r.rating;
-      out.insertAdjacentHTML("beforeend",
-        `<div class="review"><p><strong>${r.name}</strong> (${r.rating} ⭐)</p><p>${r.text}</p></div>`);
-    });
-    avgEl.textContent = `⭐ ${(sum / reviews.length).toFixed(1)}`;
-  }
-  renderReviews();
-
-  // 4.5 Add new review
-  document.getElementById("reviewForm")?.addEventListener("submit", e => {
-    e.preventDefault();
-    const name   = document.getElementById("reviewer").value.trim();
-    const text   = document.getElementById("reviewText").value.trim();
-    const rating = document.getElementById("rating").value;
-    if (!name || !text || !rating) return alert("Complete all fields!");
-
-    reviews.push({ name, text, rating });
-    saveReviews(email, reviews);
-    renderReviews();
-    e.target.reset();
-    [...document.querySelectorAll("#starRating span")].forEach(s=>s.classList.remove("active"));
-  });
-
-  // 4.6 Star-click logic
-  document.querySelectorAll("#starRating span").forEach(star=>{
-    star.addEventListener("click",()=>{
-      const val = +star.dataset.value;
-      document.getElementById("rating").value = val;
-      document.querySelectorAll("#starRating span")
-        .forEach(s => s.classList.toggle("active", +s.dataset.value <= val));
-    });
-  });
-});
-
   // Dark mode toggle
   const darkToggle = document.getElementById("darkToggle");
   const currentMode = localStorage.getItem("darkMode") === "enabled";
@@ -545,10 +409,11 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// TODO: Replace localStorage with real backend POST request when API is ready
+// local storage
 localStorage.setItem("vendors", JSON.stringify([
   { id: 1, name: "Glam Squad", category: "Beauty Professionals" },
-  { id: 2, name: "Trendy Curls", category: "Hair Stylist" },
+  { id: 2, name: "Campus Threads", category: "Local Products" },
+  { id: 3, name: "Lashes", category: "Beauty Professionals" },
 ]));
 
 document.querySelector("#searchForm").addEventListener("submit", function (e) {
@@ -582,19 +447,15 @@ document.querySelector("#searchForm").addEventListener("submit", function (e) {
 });
 
 
-/*  VERY small gate: only the *dashboard* needs the vendor role       */
-
 document.addEventListener("DOMContentLoaded", () =>{
-  const path = location.pathname;               // e.g.  /vendors-dashboard.html
+  const path = location.pathname;            
   const email = localStorage.getItem("userEmail");
   const role  = localStorage.getItem("userRole");
-
-  // Block only vendors-dashboard, allow everything else
   const dashboardNeeded = path.endsWith("vendors-dashboard.html");
 
   if (dashboardNeeded && role!=="vendor") {
       alert("Unauthorized access. Redirecting to home.");
-      location.href = "index.html";             // or vendors.html
+      location.href = "index.html";            
   }
 
     document.getElementById("vendorEmail").textContent = userEmail;
@@ -605,7 +466,6 @@ document.addEventListener("DOMContentLoaded", () =>{
         reviews: ""
     };
 
-    // Prefill inputs
     document.getElementById("businessNameInput").value = savedData.businessName;
     document.getElementById("servicesInput").value = savedData.services;
     document.getElementById("reviewsInput").value = savedData.reviews;

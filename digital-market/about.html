@@ -24,8 +24,21 @@
                 <li><a href="about.html" class="active">About</a></li>
                 <li><a href="vendors.html">Vendors</a></li>
                 <li><a href="contact.html">Contact</a></li>
-                <li><a href="#" class="btn-login">Login</a></li>
-                <li><a href="#" class="btn-signup">Sign Up</a></li>
+                <li class="auth-buttons">
+  <a href="#" class="btn-login">Login</a>
+  <a href="#" class="btn-signup">Sign Up</a>
+</li>
+<li class="user-dropdown" style="display: none;">
+  <div class="user-icon">
+    <i class="fas fa-user-circle"></i>
+    <span id="userNameNav"></span>
+    <ul class="dropdown-menu">
+      <li><a href="#" id="openCustomerProfile">My Profile</a></li>
+      <li><a href="#" id="navLogoutBtn">Logout</a></li>
+    </ul>
+  </div>
+</li>
+
                 <li class="signup-container">
                 </li>
             </ul>
@@ -271,7 +284,129 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="customerProfileModal">
+  <div class="modal-content">
+    <span class="close-modal" onclick="document.getElementById('customerProfileModal').style.display='none'">&times;</span>
     
+
+    <div id="profileView">
+      <h2>My Profile</h2>
+      <p><strong>Name:</strong> <span id="viewProfileName"></span></p>
+      <p><strong>Email:</strong> <span id="viewProfileEmail"></span></p>
+      <p><strong>Phone:</strong> <span id="viewProfilePhone"></span></p>
+      <button class="btn-primary" id="editProfileBtn">Edit Profile</button>
+    </div>
+
+    <form id="editProfileForm" style="display: none;">
+      <h2>Edit Profile</h2>
+      <div class="form-group">
+        <label for="profileName">Full Name</label>
+        <input type="text" id="profileName" required>
+      </div>
+      <div class="form-group">
+        <label for="profileEmail">Email (read-only)</label>
+        <input type="email" id="profileEmail" readonly>
+      </div>
+      <div class="form-group">
+        <label for="profilePhone">Phone Number</label>
+        <input type="tel" id="profilePhone" required>
+      </div>
+      <div class="form-buttons">
+        <button type="submit" class="btn-primary">Save Changes</button>
+        <button type="button" class="btn-secondary" id="cancelEditBtn">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const userEmail = localStorage.getItem("userEmail");
+    const userRole = localStorage.getItem("userRole");
+    const users = JSON.parse(localStorage.getItem("users") || "{}");
+
+    const authBtns = document.querySelector(".auth-buttons");
+    const userDropdown = document.querySelector(".user-dropdown");
+    const userNameNav = document.getElementById("userNameNav");
+    const profileBtn = document.getElementById("openCustomerProfile");
+    const profileModal = document.getElementById("customerProfileModal");
+
+    // Show dropdown if logged in
+    if (userEmail && users[userEmail]) {
+        authBtns.style.display = "none";
+        userDropdown.style.display = "flex";
+        userNameNav.textContent = users[userEmail].name.split(" ")[0];
+    }
+profileBtn.addEventListener("click", function (e) {
+    e.preventDefault();
+
+    const currentRole = localStorage.getItem("userRole");
+    const currentEmail = localStorage.getItem("userEmail");
+    const currentUsers = JSON.parse(localStorage.getItem("users") || "{}");
+
+    if (!currentEmail || !currentUsers[currentEmail]) return;
+
+    if (currentRole === "customer") {
+        showCustomerProfile(currentUsers[currentEmail]); 
+    } else if (currentRole === "vendor") {
+        window.location.href = "vendors-dashboard.html";
+    } else {
+        alert("Unknown user role. Please log in again.");
+    }
+});
+function showCustomerProfile(user) {
+    document.getElementById("profileView").style.display = "block";
+    document.getElementById("editProfileForm").style.display = "none";
+    document.getElementById("viewProfileName").textContent = user.name;
+    document.getElementById("viewProfileEmail").textContent = user.email;
+    document.getElementById("viewProfilePhone").textContent = user.phone;
+    document.getElementById("profileName").value = user.name;
+    document.getElementById("profileEmail").value = user.email;
+    document.getElementById("profilePhone").value = user.phone;
+    document.getElementById("customerProfileModal").style.display = "block";
+}
+
+document.getElementById("editProfileBtn").addEventListener("click", function () {
+    document.getElementById("profileView").style.display = "none";
+    document.getElementById("editProfileForm").style.display = "block";
+});
+
+document.getElementById("cancelEditBtn").addEventListener("click", function () {
+    document.getElementById("profileView").style.display = "block";
+    document.getElementById("editProfileForm").style.display = "none";
+});
+
+    document.getElementById("editProfileForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const email = localStorage.getItem("userEmail");
+        const users = JSON.parse(localStorage.getItem("users") || "{}");
+
+        if (!users[email]) return;
+
+        users[email].name = document.getElementById("profileName").value;
+        users[email].phone = document.getElementById("profilePhone").value;
+
+        localStorage.setItem("users", JSON.stringify(users));
+        alert("Profile updated successfully!");
+        profileModal.style.display = "none";
+    });
+
+    // Logout
+    document.getElementById("navLogoutBtn").addEventListener("click", function (e) {
+        e.preventDefault();
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("userRole");
+        location.reload();
+    });
+
+    window.onclick = function (event) {
+        if (event.target == profileModal) {
+            profileModal.style.display = "none";
+        }
+    };
+});
+
+</script>
+
     <script src="script.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </body>
