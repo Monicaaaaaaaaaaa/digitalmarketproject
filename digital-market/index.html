@@ -182,6 +182,16 @@
         </div>
     </div>
 </div>
+<div class="modal" id="forgotPasswordModal" style="display:none;">
+  <div class="modal-content">
+    <span class="close-modal" onclick="document.getElementById('forgotPasswordModal').style.display='none'">&times;</span>
+    <h2>Forgot Password</h2>
+    <p>Enter your registered email address</p>
+    <input type="email" id="resetEmail" placeholder="Enter email" required>
+    <button id="sendOtpBtn" onclick="sendOtp()">Send OTP</button>
+    <p id="forgotError" style="color:red;"></p>
+  </div>
+</div>
 
 
     <div class="modal" id="signupModal">
@@ -312,75 +322,136 @@
     </form>
   </div>
 </div>
+    <div class="modal" id="otpVerificationModal" style="display:none;">
+  <div class="modal-content">
+    <span class="close-modal" onclick="document.getElementById('otpVerificationModal').style.display='none'">&times;</span>
+    <h2>Verify OTP</h2>
+    <p>Enter the 6-digit code sent to your email</p>
+    <input type="text" id="enteredOtp" placeholder="Enter OTP" maxlength="6">
+    <button onclick="verifyOtp()">Verify</button>
+    <p id="otpError" style="color:red;"></p>
+  </div>
+</div>
+</body>
 
-
-
+<div class="modal" id="resetPasswordModal" style="display:none;">
+  <div class="modal-content">
+    <span class="close-modal" onclick="document.getElementById('resetPasswordModal').style.display='none'">&times;</span>
+    <h2>Reset Password</h2>
+    <input type="password" id="newPassword" placeholder="New password">
+    <input type="password" id="confirmNewPassword" placeholder="Confirm password">
+    <button onclick="resetPassword()">Reset</button>
+    <p id="resetError" style="color:red;"></p>
+  </div>
+</div>
     <script>
-document.getElementById("signupForm").addEventListener("submit", function(e) {
+document.getElementById("signupForm").addEventListener("submit", async function(e) {
     e.preventDefault();
+
+    const role = document.querySelector(".user-type.active").dataset.type;
 
     const name = document.getElementById("signupName").value.trim();
     const email = document.getElementById("signupEmail").value.trim();
     const password = document.getElementById("signupPassword").value;
     const confirm = document.getElementById("confirmPassword").value;
     const phone = document.getElementById("signupPhone").value;
-    const role = document.querySelector(".user-type.active").dataset.type;
+    const businessName = document.getElementById("businessName").value.trim();
+    const businessType = document.getElementById("businessType").value;
 
     if (password !== confirm) {
         alert("Passwords do not match.");
         return;
     }
 
-    let users = JSON.parse(localStorage.getItem("users") || "{}");
+    let payload;
+    let apiRoute;
 
-    if (users[email]) {
-        alert("Email already exists.");
-        return;
+    if(role === "customer"){
+        apiRoute = "auth/signup/customer"
+        payload = {
+            full_name: name,
+            email: email,
+            phone_number: phone,
+            role: role,
+            password: password,
+            confirm_password: confirm
+        }
+    }
+    else{
+        apiRoute = "authsignup/vendor"
+        payload = {
+            full_name: name,
+            email: email,
+            phone_number: phone,
+            role: role,
+            password: password,
+            confirm_password: confirm,
+            business_name: businessName,
+            business_type: businessType
+        }
     }
 
-    users[email] = { name, email, password, phone, role };
-    localStorage.setItem("users", JSON.stringify(users));
+    const response = await fetch("https://e-commerce-4sit.onrender.com/api/v1/" + apiRoute, {
+        headers:{
+            "Content-Type": "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify(payload)
+    })
 
-    alert("Signup successful!");
+    if(response.ok) alert("Signup successful!");
+    else{
+        const data = await response.json()
+        alert(data?.detail[0]?.msg)
+    }
+    
     document.getElementById("signupForm").reset();
     document.getElementById("signupModal").style.display = "none";
 });
       
-document.getElementById("loginForm").addEventListener("submit", function(e) {
+document.getElementById("loginForm").addEventListener("submit", async function(e) {
     e.preventDefault();
 
     const email = document.getElementById("loginEmail").value.trim();
     const password = document.getElementById("loginPassword").value.trim();
-    const role = document.getElementById("userRole").value;
+    // const role = document.getElementById("userRole").value;
 
-    // Simulated database
-const users = JSON.parse(localStorage.getItem("users") || "{}");
-if (!users[email]) {
-    alert("Email not found.");
-    return;
-}
-
-if (users[email].password !== password) {
-    alert("Incorrect password.");
-    return;
-}
-
-if (users[email].role !== role) {
-    alert(`This account is not registered as a ${role}.`);
-    return;
-}
-
-    // Save role + email in localStorage
-    localStorage.setItem("userEmail", email);
-    localStorage.setItem("userRole", role);
-
-    if (role === "vendor") {
-        window.location.href = "vendors-dashboard.html";
-    } else if (role === "customer") {
-        window.location.href = "index.html";
+    const payload = {
+        email: email,
+        password: password
     }
+
+    const response = await fetch("https://e-commerce-4sit.onrender.com/api/v1/auth/login", {
+        headers:{
+            "Content-Type": "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify(payload)
+    })
+    const data = await response.json()
+    if(response.ok){
+        console.log(data)
+        const user = {
+            role: ""
+        }
+        // if (currentRole === "customer") {
+        // localStorage.setItem("customer", JSON.stringify(data))
+        //     showCustomerProfile(currentUsers[currentEmail]); 
+        // } else if (currentRole === "vendor") {
+        // localStorage.setItem("vendor", JSON.stringify(data))
+        //     window.location.href = "vendors-dashboard.html"; 
+        // }
+    }
+    else alert(data?.detail[0]?.msg)
 });
 document.addEventListener("DOMContentLoaded", function () {
+    const user = JSON.parse(localStorage.getItem("user"))
+
+
+
+
+
+
     const userEmail = localStorage.getItem("userEmail");
     const userRole = localStorage.getItem("userRole");
     const users = JSON.parse(localStorage.getItem("users") || "{}");

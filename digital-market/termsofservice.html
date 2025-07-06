@@ -139,8 +139,7 @@
     const userNameNav = document.getElementById("userNameNav");
     const profileBtn = document.getElementById("openCustomerProfile");
     const profileModal = document.getElementById("customerProfileModal");
-
-    // Show dropdown if logged in
+    
     if (userEmail && users[userEmail]) {
         authBtns.style.display = "none";
         userDropdown.style.display = "flex";
@@ -156,46 +155,34 @@ profileBtn.addEventListener("click", function (e) {
     if (!currentEmail || !currentUsers[currentEmail]) return;
 
     if (currentRole === "customer") {
-        showCustomerProfile(currentUsers[currentEmail]); // Show modal
+        showCustomerProfile(currentUsers[currentEmail]);
     } else if (currentRole === "vendor") {
-        window.location.href = "vendors-dashboard.html"; // Redirect vendors
+        window.location.href = "vendors-dashboard.html"; 
     } else {
         alert("Unknown user role. Please log in again.");
     }
 });
 function showCustomerProfile(user) {
-    // Show view section and hide form
     document.getElementById("profileView").style.display = "block";
     document.getElementById("editProfileForm").style.display = "none";
-
-    // Fill view mode
     document.getElementById("viewProfileName").textContent = user.name;
     document.getElementById("viewProfileEmail").textContent = user.email;
     document.getElementById("viewProfilePhone").textContent = user.phone;
-
-    // Fill edit form fields (in case user clicks "Edit")
     document.getElementById("profileName").value = user.name;
     document.getElementById("profileEmail").value = user.email;
     document.getElementById("profilePhone").value = user.phone;
-
-    // Show modal
     document.getElementById("customerProfileModal").style.display = "block";
 }
-
-// Edit button
 document.getElementById("editProfileBtn").addEventListener("click", function () {
     document.getElementById("profileView").style.display = "none";
     document.getElementById("editProfileForm").style.display = "block";
 });
 
-// Cancel button
 document.getElementById("cancelEditBtn").addEventListener("click", function () {
     document.getElementById("profileView").style.display = "block";
     document.getElementById("editProfileForm").style.display = "none";
 });
 
-
-    // Handle Save Changes in profile modal
     document.getElementById("editProfileForm").addEventListener("submit", function (e) {
         e.preventDefault();
         const email = localStorage.getItem("userEmail");
@@ -211,7 +198,6 @@ document.getElementById("cancelEditBtn").addEventListener("click", function () {
         profileModal.style.display = "none";
     });
 
-    // Logout
     document.getElementById("navLogoutBtn").addEventListener("click", function (e) {
         e.preventDefault();
         localStorage.removeItem("userEmail");
@@ -219,7 +205,6 @@ document.getElementById("cancelEditBtn").addEventListener("click", function () {
         location.reload();
     });
 
-    // Close modal if user clicks outside
     window.onclick = function (event) {
         if (event.target == profileModal) {
             profileModal.style.display = "none";

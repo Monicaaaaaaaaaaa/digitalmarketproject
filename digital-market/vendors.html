@@ -212,6 +212,18 @@
         </div>
     </div>
 </div>
+
+<div class="modal" id="forgotPasswordModal" style="display:none;">
+  <div class="modal-content">
+    <span class="close-modal" onclick="document.getElementById('forgotPasswordModal').style.display='none'">&times;</span>
+    <h2>Forgot Password</h2>
+    <p>Enter your registered email address to receive an OTP.</p>
+    <input type="email" id="resetEmail" placeholder="Enter your email" required>
+    <button onclick="sendOtp()">Send OTP</button>
+    <p id="forgotError" style="color:red;"></p>
+  </div>
+</div>
+
     <div class="modal" id="signupModal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
@@ -253,10 +265,6 @@
                         <option value="ecommerce">E-commerce</option>
                         <option value="services">Services</option>
                     </select>
-                </div>
-                <div class="form-group">
-                    <label for="signupMatric">Matric Number</label>
-                    <input type="text" id="signupMatric" placeholder="Your matric number" required>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
@@ -314,6 +322,27 @@
   <div class="modal-content">
     <span class="close-modal" onclick="document.getElementById('customerProfileModal').style.display='none'">&times;</span>
     
+ <div class="modal" id="otpVerificationModal" style="display:none;">
+  <div class="modal-content">
+    <span class="close-modal" onclick="document.getElementById('otpVerificationModal').style.display='none'">&times;</span>
+    <h2>Verify OTP</h2>
+    <p>Enter the 6-digit code sent to your email</p>
+    <input type="text" id="enteredOtp" placeholder="Enter OTP" maxlength="6">
+    <button onclick="verifyOtp()">Verify</button>
+    <p id="otpError" style="color:red;"></p>
+  </div>
+</div>
+
+<div class="modal" id="resetPasswordModal" style="display:none;">
+  <div class="modal-content">
+    <span class="close-modal" onclick="document.getElementById('resetPasswordModal').style.display='none'">&times;</span>
+    <h2>Reset Password</h2>
+    <input type="password" id="newPassword" placeholder="New password">
+    <input type="password" id="confirmNewPassword" placeholder="Confirm password">
+    <button onclick="resetPassword()">Reset</button>
+    <p id="resetError" style="color:red;"></p>
+  </div>
+</div>
 
     <div id="profileView">
       <h2>My Profile</h2>
@@ -344,8 +373,14 @@
     </form>
   </div>
 </div>
+<div id="globalLoader" class="loader-overlay" style="display:none;">
+  <div class="spinner"></div>
+</div>
+
+</body>
 <script>
-    
+
+    // Fetch all the vendors everytime the page reloads and save.
     // Render vendors grid for everyone
     document.addEventListener("DOMContentLoaded", () => {
       const grid = document.querySelector(".vendors-grid");

@@ -19,19 +19,19 @@
     <form id="vendorForm">
       <label>Business Name<input type="text" id="businessName" required></label>
       <label>Phone<input type="tel" id="phone" required></label>
-      <label>Category (e.g. Beauty, Ecommerce…)<input type="text" id="category" required></label>
+      <label>Category (e.g. Beauty, local product)<input type="text" id="category" required></label>
       <label>Description<textarea id="description" rows="4" required></textarea></label>
-      <label>Header/Logo Image URL<input type="url" id="imageUrl" required></label>
+      <label>Brand Logo<input type="file" id="imageFile" accept="image/*"></label>
       <hr>
       <h3>Services Offered</h3>
-      <div id="servicesContainer"></div>
+      <div id="servicesContainer"></div>s
       <button type="button" class="btn-secondary" id="addServiceBtn">+ Add Service</button>
       <br><br>
-      <button type="submit" class="btn-primary">📂 Save</button>
+      <button type="submit" class="btn-primary">Save</button>
     </form>
   </section>
 
-  <a href="vendors-profile.html?email=" id="viewProfileBtn" class="btn-secondary">👀 View Public Profile</a>
+  <a href="vendors-profile.html?email=" id="viewProfileBtn" class="btn-secondary">View Profile</a>
 
   <section class="vendor-reviews">
     <h2>Customer Reviews</h2>
@@ -54,29 +54,29 @@
 </main>
 
 <script>
-let email = null;
+let email = localStorage.getItem("userEmail")
 document.addEventListener("DOMContentLoaded", () => {
-  email = localStorage.getItem("userEmail");
+  // email = localStorage.getItem("userEmail");
   const role = localStorage.getItem("userRole");
-  if (role !== "vendor" || !email) {
-    alert("Please log in as a vendor first.");
-    location.href = "index.html";
-    return;
-  }
+  const user = JSON.parse(localStorage.getItem("user"))
+  // if (user || user?.role !== "vendor") {
+  //   alert("Please log in as a vendor first.");
+  //   location.href = "index.html";
+  //   return;
+  // }
 
   document.getElementById("vendorEmail").textContent = email;
-  document.getElementById("viewProfileBtn").href = `vendors-profile.html?email=${email}`;
+  document.getElementById("viewProfileBtn").href = `vendor-profile.html?email=${email}`;
 
   const dataKey = `vendorData_${email}`;
   const existing = JSON.parse(localStorage.getItem(dataKey)) || {};
   const f = id => document.getElementById(id);
 
-  f("businessName").value = existing.businessName || "";
+   f("businessName").value = existing.businessName || "";
   f("phone").value = existing.phone || "";
   f("category").value = existing.category || "";
   f("description").value = existing.description || "";
-  f("imageUrl").value = existing.imageUrl || "";
-
+  f("imageFile").value = existing.imageFile || "";
   const servicesContainer = document.getElementById("servicesContainer");
   const addServiceBtn = document.getElementById("addServiceBtn");
   let services = existing.services || [];
@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
       div.className = "service-input";
       div.innerHTML = `
         <label>Service Name<input type="text" class="service-name" data-index="${index}" value="${service.name || ""}" required></label>
-        <label>Image URL<input type="url" class="service-image" data-index="${index}" value="${service.image || ""}" required></label>
+        <label>Image File<input type="file" class="service-image" data-index="${index}" accept="image/*" required></label>
         <label>Price (₦)<input type="number" class="service-price" data-index="${index}" value="${service.price || ""}" required></label>
         <hr>
       `;
@@ -106,26 +106,59 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("vendorForm").addEventListener("submit", e => {
     e.preventDefault();
 
-    const updatedServices = Array.from(document.querySelectorAll(".service-name")).map((input, i) => {
-      return {
-        name: input.value.trim(),
-        image: document.querySelectorAll(".service-image")[i].value.trim(),
-        price: document.querySelectorAll(".service-price")[i].value.trim()
-      };
-    });
+    const imageInput = document.getElementById("imageFile").files[0];
+    const serviceElements = Array.from(document.querySelectorAll(".service-name"));
 
-    const vendorData = {
-      businessName: f("businessName").value.trim(),
-      phone: f("phone").value.trim(),
-      category: f("category").value.trim(),
-      description: f("description").value.trim(),
-      imageUrl: f("imageUrl").value.trim(),
-      services: updatedServices
+    const convertImageToBase64 = (file) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+      });
     };
 
-    localStorage.setItem(dataKey, JSON.stringify(vendorData));
-    alert("✅ Profile updated successfully!");
-    window.location.href = `./vendors-profile.html?email=${email}`;
+    const readAllServiceImages = async () => {
+      const imageFiles = document.querySelectorAll(".service-image");
+      const updatedServices = [];
+
+      for (let i = 0; i < serviceElements.length; i++) {
+        const name = serviceElements[i].value.trim();
+        const imageFile = imageFiles[i].files[0];
+        const price = document.querySelectorAll(".service-price")[i].value.trim();
+
+        let imageBase64 = "";
+        if (imageFile) {
+          imageBase64 = await convertImageToBase64(imageFile);
+        }
+
+        updatedServices.push({ name, image: imageBase64, price });
+      }
+
+      return updatedServices;
+    };
+
+    const saveData = async (logoBase64) => {
+      const updatedServices = await readAllServiceImages();
+      const vendorData = {
+        businessName: f("businessName").value.trim(),
+        phone: f("phone").value.trim(),
+        category: f("category").value.trim(),
+        description: f("description").value.trim(),
+        image: logoBase64 || existing.image || "",
+        services: updatedServices
+      };
+
+      localStorage.setItem(dataKey, JSON.stringify(vendorData));
+      alert("✅ Profile updated successfully!");
+      window.location.href = `vendor-profile.html?email=${email}`;
+    };
+
+    if (imageInput) {
+      convertImageToBase64(imageInput).then(base64 => saveData(base64));
+    } else {
+      saveData();
+    }
   });
 
   const bookingsKey = `vendorBookings_${email}`;
@@ -149,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <p>Status: <strong>${appt.status}</strong></p>
         <button class="btn-primary" onclick="updateStatus(${index}, 'Approved')">Approve</button>
         <button class="btn-secondary" onclick="updateStatus(${index}, 'Declined')">Decline</button>
-        <button class="btn-secondary" onclick="deleteBooking(${index})">🗑️ Delete</button>
+        <button class="btn-secondary" onclick="deleteBooking(${index})">🖚 Delete</button>
         <hr>
       `;
       appointmentList.appendChild(div);
@@ -157,8 +190,24 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   window.updateStatus = function(index, newStatus) {
-    appointments[index].status = newStatus;
+    const booking = appointments[index];
+    booking.status = newStatus;
     localStorage.setItem(bookingsKey, JSON.stringify(appointments));
+
+    const mappingKey = `bookingMapping_${booking.id}`;
+    const mapping = JSON.parse(localStorage.getItem(mappingKey));
+
+    if (mapping && mapping.customerEmail) {
+      const customerKey = `customerBookings_${mapping.customerEmail}`;
+      const customerBookings = JSON.parse(localStorage.getItem(customerKey)) || [];
+
+      const customerBooking = customerBookings.find(b => b.id === booking.id);
+      if (customerBooking) {
+        customerBooking.status = newStatus;
+        localStorage.setItem(customerKey, JSON.stringify(customerBookings));
+      }
+    }
+
     applyFilter();
   };
 

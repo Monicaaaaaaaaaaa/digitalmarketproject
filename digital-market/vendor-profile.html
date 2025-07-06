@@ -16,7 +16,7 @@
 <main class="vendor-profile-container">
 
   <section class="vendor-details fade-in">
-    <img id="vendor-image" src="default-vendor.jpg" alt="Vendor banner"/>
+    <img id="vendor-image" src="default-vendor.jpg" alt="Vendor banner" style="max-height: 250px; object-fit: cover;" />
     <p><strong>Email:</strong> <span id="vendor-email"> </span></p>
     <p><strong>Phone:</strong> <span id="vendor-phone"> </span></p>
     <p><strong>Category:</strong> <span id="vendor-category"> </span></p>
@@ -249,7 +249,7 @@ const fallbackProfiles = {
     phone: "09012345678",
     category: "Beauty Professionals",
     description: "Professional makeup, hair styling, and nail services.",
-    imageUrl: "images/glamsquad.jpg",
+    imageFile: "images/glamsquad.jpg",
     services: [
       { name: "Makeup", image: "images/makeup.jpg", price: "5000" },
       { name: "Hair Styling", image: "images/hairstyling.jpg", price: "7000" }
@@ -260,7 +260,7 @@ const fallbackProfiles = {
     phone: "08123456789",
     category: "Local Products",
     description: "Trendy campus fashion and accessories for students.",
-    imageUrl: "images/campusthreads.jpg",
+    imageFile: "images/campusthreads.jpg",
     services: [
       { name: "T-Shirts", image: "images/tshirt.jpg", price: "3000" },
       { name: "Hoodies", image: "images/hoodie.jpg", price: "6000" }
@@ -271,7 +271,7 @@ const fallbackProfiles = {
     phone: "08098765432",
     category: "Beauty Professionals",
     description: "Luxury lash extensions and beauty enhancements.",
-    imageUrl: "images/lashesbyivy.jpg",
+    imageFile: "images/lashesbyivy.jpg",
     services: [
       { name: "Classic Lash Set", image: "images/lash1.jpg", price: "4000" },
       { name: "Volume Lash Set", image: "images/lash2.jpg", price: "6500" }
@@ -291,29 +291,41 @@ const fallbackProfiles = {
   el("vendor-phone").textContent = data.phone || "—";
   el("vendor-category").textContent = data.category || "—";
   el("vendor-description").textContent = data.description || "";
-  el("vendor-image").src = data.imageUrl || "default-vendor.jpg";
+  if (data.imageUrl && data.imageUrl.startsWith("data:image")) {
+  el("vendor-image").src = data.imageUrl;
+} else if (data.imageUrl && data.imageUrl.trim() !== "") {
+  el("vendor-image").src = data.imageUrl; // fallback for valid non-base64 paths
+} else {
+  el("vendor-image").src = "default-vendor.jpg";
+}
+
 
   localStorage.setItem("currentVendorId", email);
 
   const today = new Date().toISOString().split('T')[0];
   el("appointmentDate").min = today;
 
-  if (Array.isArray(data.services) && data.services.length > 0) {
-    const container = document.getElementById("servicesList");
-    data.services.forEach(service => {
-      const card = document.createElement("div");
-      card.className = "service-card";
-      card.innerHTML = `
-        <img src="${service.image || 'default-service.jpg'}" alt="${service.name}">
-        <div class="service-info">
-          <p>${service.name}</p>
-          <strong>₦${service.price || "—"}</strong>
-        </div>
-      `;
-      container.appendChild(card);
-    });
-    document.getElementById("servicesBlock").style.display = "block";
-  }
+if (Array.isArray(data.services) && data.services.length > 0) {
+  const container = document.getElementById("servicesList");
+  data.services.forEach(service => {
+    const card = document.createElement("div");
+    card.className = "service-card";
+    card.innerHTML = `
+      <img src="${service.image || 'default-service.jpg'}" alt="${service.name}">
+      <div class="service-info">
+        <p>${service.name}</p>
+        <strong>₦${service.price || "—"}</strong>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+  document.getElementById("servicesBlock").style.display = "block";
+} else {
+  document.getElementById("servicesBlock").style.display = "block";
+  document.getElementById("servicesList").innerHTML =
+    '<div class="empty-state">No services added yet</div>';
+}
+
 
   const category = (data.category || "").toLowerCase();
   const bookingTrigger = document.getElementById("bookingTrigger");

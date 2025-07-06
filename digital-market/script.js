@@ -20,10 +20,11 @@ const otpInputs = document.querySelectorAll('.otp-input');
 const resendOtpBtn = document.getElementById('resendOtp');
 const otpTimerElement = document.getElementById('otpTimer');
 const sendOtpBtn = document.getElementById("sendOtp");
-const emailLSKey   = "userEmail";               // saved at login
-const roleLSKey    = "userRole";                // "vendor" or "customer"
-const dataPrefix   = "vendorData_";             // <-- one canonical prefix
+const emailLSKey   = "userEmail";              
+const roleLSKey    = "userRole";                
+const dataPrefix   = "vendorData_";            
 const reviewsPrefix = "vendorReviews_";
+
 
 
 // NAV TOGGLE
@@ -50,7 +51,6 @@ function closeModal(modal) {
     document.body.style.overflow = 'auto';
 }
 
-// MODAL TOGGLE BUTTONS
 if (showLoginModalFromSignup) {
     showLoginModalFromSignup.addEventListener('click', (e) => {
         e.preventDefault();
@@ -88,7 +88,6 @@ document.querySelector('.btn-signup')?.addEventListener('click', (e) => {
     openModal(signupModal);
 });
 
-// FILTERING
 if (filterBtns.length > 0) {
     filterBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -119,7 +118,6 @@ if (testimonialCards.length > 0) {
     dots.forEach((dot, i) => dot.addEventListener('click', () => showSlide(i)));
 }
 
-// USER TYPE SELECT
 if (userTypes.length > 0) {
     userTypes.forEach(type => {
         type.addEventListener('click', () => {
@@ -145,13 +143,46 @@ if (togglePasswordBtns.length > 0) {
     });
 }
 
+document.querySelector(".forgot-password").addEventListener("click", function (e) {
+  e.preventDefault();
+  document.getElementById("forgotPasswordModal").style.display = "block";
+});
+
+function sendOtp() {
+  const email = document.getElementById("resetEmail").value.trim();
+  const errorBox = document.getElementById("forgotError");
+
+  if (!email) {
+    errorBox.textContent = "Please enter your email.";
+    return;
+  }
+
+  const vendor = localStorage.getItem(`vendorData_${email}`);
+  const customer = localStorage.getItem(`customerData_${email}`);
+
+  if (!vendor && !customer) {
+    errorBox.textContent = "Email not found.";
+    return;
+  }
+
+  const otp = Math.floor(100000 + Math.random() * 900000);
+  localStorage.setItem("resetEmail", email);
+  localStorage.setItem("resetOtp", otp.toString());
+
+  alert(`OTP sent to ${email} (Dev only: ${otp})`);
+  document.getElementById("otpVerificationModal").style.display = "block";
+
+}
+
 // OTP
 function verifyOTP() {
     let otp = '';
     otpInputs.forEach(input => otp += input.value);
     if (otp.length === otpInputs.length) {
         console.log('OTP entered:', otp);
-        closeModal(otpModal);
+        document.getElementById("otpVerificationModal").style.display = "none";
+        document.getElementById("resetPasswordModal").style.display = "block";
+
     }
 }
 otpInputs.forEach((input, index) => {
@@ -167,7 +198,6 @@ otpInputs.forEach((input, index) => {
     });
 });
 
-// OTP TIMER
 let otpTimer;
 const otpTimerDuration = 60;
 function startOTPTimer() {
@@ -185,7 +215,6 @@ function startOTPTimer() {
     }, 1000);
 }
 
-// OTP BUTTONS
 if (resendOtpBtn) {
     resendOtpBtn.addEventListener('click', () => {
         console.log('Resending OTP...');
@@ -200,6 +229,226 @@ if (sendOtpBtn) {
         startOTPTimer();
     });
 }
+
+function resetPassword() {
+  const email = localStorage.getItem("resetEmail");
+  const newPassword = document.getElementById("newPassword").value;
+  const confirmPassword = document.getElementById("confirmNewPassword").value;
+  const error = document.getElementById("resetError");
+
+  if (!email || !newPassword || !confirmPassword) {
+    error.textContent = "All fields are required.";
+    return;
+  }
+
+  if (newPassword !== confirmPassword) {
+    error.textContent = "Passwords do not match.";
+    return;
+  }
+
+  // Update local data (dev only — no backend call yet)
+  const vendorKey = `vendorData_${email}`;
+  const customerKey = `customerData_${email}`;
+  let user = JSON.parse(localStorage.getItem(vendorKey) || localStorage.getItem(customerKey));
+
+  if (user) {
+    user.password = newPassword;
+    localStorage.setItem(vendorKey.includes(email) ? vendorKey : customerKey, JSON.stringify(user));
+    alert("Password reset successful!");
+    document.getElementById("resetPasswordModal").style.display = "none";
+  } else {
+    error.textContent = "User not found.";
+  }
+}
+
+
+document.getElementById("signupForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const role = document.querySelector(".user-type.active").dataset.type;
+
+    const name = document.getElementById("signupName").value.trim();
+    const email = document.getElementById("signupEmail").value.trim();
+    const password = document.getElementById("signupPassword").value;
+    const confirm = document.getElementById("confirmPassword").value;
+    const phone = document.getElementById("signupPhone").value;
+    const businessName = document.getElementById("businessName").value.trim();
+    const businessType = document.getElementById("businessType").value;
+
+    if (password !== confirm) {
+        alert("Passwords do not match.");
+        return;
+    }
+
+    let payload;
+    let apiRoute;
+
+    if(role === "customer"){
+        apiRoute = "auth/signup/customer"
+        payload = {
+            full_name: name,
+            email: email,
+            phone_number: phone,
+            role: role,
+            password: password,
+            confirm_password: confirm
+        }
+    }
+    else{
+        apiRoute = "authsignup/vendor"
+        payload = {
+            full_name: name,
+            email: email,
+            phone_number: phone,
+            role: role,
+            password: password,
+            confirm_password: confirm,
+            business_name: businessName,
+            business_type: businessType
+        }
+    }
+
+    const response = await fetch("https://e-commerce-4sit.onrender.com/api/v1/" + apiRoute, {
+        headers:{
+            "Content-Type": "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify(payload)
+    })
+
+    if(response.ok) alert("Signup successful!");
+    else{
+        const data = await response.json()
+        alert(data?.detail[0]?.msg)
+    }
+    
+    document.getElementById("signupForm").reset();
+    document.getElementById("signupModal").style.display = "none";
+});
+      
+document.getElementById("loginForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value.trim();
+    // const role = document.getElementById("userRole").value;
+
+    const payload = {
+        email: email,
+        password: password
+    }
+
+    const response = await fetch("https://e-commerce-4sit.onrender.com/api/v1/auth/login", {
+        headers:{
+            "Content-Type": "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify(payload)
+    })
+    const data = await response.json()
+    if(response.ok){
+        console.log(data)
+        const user = {
+            role: ""
+        }
+
+        // if (currentRole === "customer") showCustomerProfile(currentUsers[currentEmail]); 
+        // else if (currentRole === "vendor") window.location.href = "vendors-dashboard.html";
+
+        localStorage.setItem("user", JSON.stringify(user))
+    }
+    else alert(data?.detail[0]?.msg)
+});
+document.addEventListener("DOMContentLoaded", function () {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+
+
+
+
+    const userEmail = localStorage.getItem("userEmail");
+    const userRole = localStorage.getItem("userRole");
+    const users = JSON.parse(localStorage.getItem("users") || "{}");
+
+    const authBtns = document.querySelector(".auth-buttons");
+    const userDropdown = document.querySelector(".user-dropdown");
+    const userNameNav = document.getElementById("userNameNav");
+    const profileBtn = document.getElementById("openCustomerProfile");
+    const profileModal = document.getElementById("customerProfileModal");
+
+    if (userEmail && users[userEmail]) {
+        authBtns.style.display = "none";
+        userDropdown.style.display = "flex";
+        userNameNav.textContent = users[userEmail].name.split(" ")[0];
+    }
+profileBtn.addEventListener("click", function (e) {
+    e.preventDefault();
+
+    const currentRole = localStorage.getItem("userRole");
+    const currentEmail = localStorage.getItem("userEmail");
+    const currentUsers = JSON.parse(localStorage.getItem("users") || "{}");
+
+    if (!currentEmail || !currentUsers[currentEmail]) return;
+
+    if (currentRole === "customer") {
+        showCustomerProfile(currentUsers[currentEmail]); 
+    } else if (currentRole === "vendor") {
+        window.location.href = "vendors-dashboard.html"; 
+    } else {
+        alert("Unknown user role. Please log in again.");
+    }
+});
+function showCustomerProfile(user) {
+    document.getElementById("profileView").style.display = "block";
+    document.getElementById("editProfileForm").style.display = "none";
+    document.getElementById("viewProfileName").textContent = user.name;
+    document.getElementById("viewProfileEmail").textContent = user.email;
+    document.getElementById("viewProfilePhone").textContent = user.phone;
+    document.getElementById("profileName").value = user.name;
+    document.getElementById("profileEmail").value = user.email;
+    document.getElementById("profilePhone").value = user.phone;
+    document.getElementById("customerProfileModal").style.display = "block";
+}
+
+document.getElementById("editProfileBtn").addEventListener("click", function () {
+    document.getElementById("profileView").style.display = "none";
+    document.getElementById("editProfileForm").style.display = "block";
+});
+
+document.getElementById("cancelEditBtn").addEventListener("click", function () {
+    document.getElementById("profileView").style.display = "block";
+    document.getElementById("editProfileForm").style.display = "none";
+});
+
+    document.getElementById("editProfileForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const email = localStorage.getItem("userEmail");
+        const users = JSON.parse(localStorage.getItem("users") || "{}");
+
+        if (!users[email]) return;
+
+        users[email].name = document.getElementById("profileName").value;
+        users[email].phone = document.getElementById("profilePhone").value;
+
+        localStorage.setItem("users", JSON.stringify(users));
+        alert("Profile updated successfully!");
+        profileModal.style.display = "none";
+    });
+
+    // Logout
+    document.getElementById("navLogoutBtn").addEventListener("click", function (e) {
+        e.preventDefault();
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("userRole");
+        location.reload();
+    });
+    window.onclick = function (event) {
+        if (event.target == profileModal) {
+            profileModal.style.display = "none";
+        }
+    };
+});
+
 
 // FORM VALIDATION
 document.querySelectorAll('form').forEach(form => {

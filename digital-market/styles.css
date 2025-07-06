@@ -1133,6 +1133,107 @@ input:focus, textarea:focus, select:focus {
     cursor: pointer;
     color: var(--text-light);
 }
+#forgotPasswordModal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  bottom: 20px;
+  right: 20px;
+  width: 350px;
+  background-color: rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(2px);
+}
+
+#forgotPasswordModal .modal-content {
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Poppins', sans-serif;
+  position: relative;
+  text-align: center;
+}
+
+#forgotPasswordModal h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: var(--text-color, #222);
+}
+
+#forgotPasswordModal p {
+  font-size: 14px;
+  color: var(--text-light, #666);
+  margin-bottom: 15px;
+}
+
+#forgotPasswordModal input[type="email"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color, #ccc);
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-family: inherit;
+}
+
+#forgotPasswordModal button {
+  background-color: var(--primary-color, #007bff);
+  color: #fff;
+  padding: 10px;
+  border: none;
+  width: 100%;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+#forgotPasswordModal button:hover {
+  background-color: var(--primary-hover, #0056b3);
+}
+
+#forgotPasswordModal #forgotError {
+  font-size: 13px;
+  color: red;
+  margin-top: 10px;
+}
+
+#forgotPasswordModal .close-modal {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  font-size: 20px;
+  color: #999;
+  cursor: pointer;
+}
+
+#forgotPasswordModal .close-modal:hover {
+  color: #000;
+}
+
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 6px solid var(--primary-color, #3498db);
+  border-top: 6px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 
 .user-type-selector {
     display: flex;
@@ -1822,14 +1923,12 @@ body.dark-mode .vendor-dashboard-container .vendor-reviews .review {
   color: var(--primary-color);
 }
 
-/* Grid for services */
 .services-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 1.5rem;
 }
 
-/* Individual service card */
 .service-card {
   background: var(--secondary-color);
   border-radius: var(--border-radius);
