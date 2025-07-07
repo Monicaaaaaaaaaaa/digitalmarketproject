@@ -1,0 +1,216 @@
+[
+    {
+        "id": "acc-1",
+        "name": "Glam Squad",
+        "email": "glamsquad@example.com",
+        "phoneNumber": "+2348012345671",
+        "avatarUrl": "/images/placeholder.jpg",
+        "type": "VENDOR",
+        "businessName": "Glam Squad",
+        "businessType": "BeautyProfessional",
+        "createdAt": "2025-07-07T08:00:00Z",
+        "services": [
+            {
+                "id": "svc-1",
+                "name": "Full Makeup",
+                "price": 5000,
+                "imageUrl": "/images/service1.jpg",
+                "createdAt": "2025-07-07T08:00:00Z"
+            },
+            {
+                "id": "svc-2",
+                "name": "Nail Art",
+                "price": 2500,
+                "imageUrl": "/images/service2.jpg",
+                "createdAt": "2025-07-07T08:00:00Z"
+            }
+        ]
+    },
+    {
+        "id": "acc-2",
+        "name": "Lashes by Lizzy",
+        "email": "lashes@example.com",
+        "phoneNumber": "+2348012345672",
+        "avatarUrl": "/images/placeholder.jpg",
+        "type": "VENDOR",
+        "businessName": "Lashes by Lizzy",
+        "businessType": "BeautyProfessional",
+        "createdAt": "2025-07-07T08:10:00Z",
+        "services": [
+            {
+                "id": "svc-3",
+                "name": "Lash Extensions",
+                "price": 3500,
+                "imageUrl": "/images/lash1.jpg",
+                "createdAt": "2025-07-07T08:10:00Z"
+            }
+        ]
+    },
+    {
+        "id": "acc-3",
+        "name": "Styled Cuts",
+        "email": "styledcuts@example.com",
+        "phoneNumber": "+2348012345673",
+        "avatarUrl": "/images/placeholder.jpg",
+        "type": "VENDOR",
+        "businessName": "Styled Cuts",
+        "businessType": "BeautyProfessional",
+        "createdAt": "2025-07-07T08:20:00Z",
+        "services": [
+            {
+                "id": "svc-4",
+                "name": "Fade Cut",
+                "price": 1500,
+                "imageUrl": "/images/haircut.jpg",
+                "createdAt": "2025-07-07T08:20:00Z"
+            }
+        ]
+    },
+    {
+        "id": "acc-4",
+        "name": "Bowen Stylists",
+        "email": "stylists@example.com",
+        "phoneNumber": "+2348012345674",
+        "avatarUrl": "/images/placeholder.jpg",
+        "type": "VENDOR",
+        "businessName": "Bowen Stylists",
+        "businessType": "BeautyProfessional",
+        "createdAt": "2025-07-07T08:30:00Z",
+        "services": [
+            {
+                "id": "svc-5",
+                "name": "Braids",
+                "price": 6000,
+                "imageUrl": "/images/braids.jpg",
+                "createdAt": "2025-07-07T08:30:00Z"
+            }
+        ]
+    },
+    {
+        "id": "acc-5",
+        "name": "Glow Nails",
+        "email": "glownails@example.com",
+        "phoneNumber": "+2348012345675",
+        "avatarUrl": "/images/placeholder.jpg",
+        "type": "VENDOR",
+        "businessName": "Glow Nails",
+        "businessType": "BeautyProfessional",
+        "createdAt": "2025-07-07T08:40:00Z",
+        "services": [
+            {
+                "id": "svc-6",
+                "name": "Gel Manicure",
+                "price": 3500,
+                "imageUrl": "/images/nails.jpg",
+                "createdAt": "2025-07-07T08:40:00Z"
+            }
+        ]
+    },
+    {
+        "id": "acc-6",
+        "name": "Campus Threads",
+        "email": "campusthreads@example.com",
+        "phoneNumber": "+2348012345676",
+        "avatarUrl": "/images/placeholder.jpg",
+        "type": "VENDOR",
+        "businessName": "Campus Threads",
+        "businessType": "ECommerce",
+        "createdAt": "2025-07-07T08:50:00Z",
+        "services": [
+            {
+                "id": "svc-7",
+                "name": "T-Shirts",
+                "price": 3000,
+                "imageUrl": "/images/shirt.jpg",
+                "createdAt": "2025-07-07T08:50:00Z"
+            },
+            {
+                "id": "svc-8",
+                "name": "Custom Hoodies",
+                "price": 7000,
+                "imageUrl": "/images/hoodie.jpg",
+                "createdAt": "2025-07-07T08:50:00Z"
+            }
+        ]
+    },
+    {
+        "id": "acc-7",
+        "name": "Green Pantry",
+        "email": "greenpantry@example.com",
+        "phoneNumber": "+2348012345677",
+        "avatarUrl": "/images/placeholder.jpg",
+        "type": "VENDOR",
+        "businessName": "Green Pantry",
+        "businessType": "ECommerce",
+        "createdAt": "2025-07-07T09:00:00Z",
+        "services": [
+            {
+                "id": "svc-9",
+                "name": "Plantain Bunch",
+                "price": 2000,
+                "imageUrl": "/images/food.jpg",
+                "createdAt": "2025-07-07T09:00:00Z"
+            }
+        ]
+    },
+    {
+        "id": "acc-8",
+        "name": "Crafty Hands",
+        "email": "craftyhands@example.com",
+        "phoneNumber": "+2348012345678",
+        "avatarUrl": "/images/placeholder.jpg",
+        "type": "VENDOR",
+        "businessName": "Crafty Hands",
+        "businessType": "ECommerce",
+        "createdAt": "2025-07-07T09:10:00Z",
+        "services": [
+            {
+                "id": "svc-10",
+                "name": "Beaded Bracelet",
+                "price": 1500,
+                "imageUrl": "/images/craft.jpg",
+                "createdAt": "2025-07-07T09:10:00Z"
+            }
+        ]
+    },
+    {
+        "id": "acc-9",
+        "name": "Tech Trinkets",
+        "email": "techtrinkets@example.com",
+        "phoneNumber": "+2348012345679",
+        "avatarUrl": "/images/placeholder.jpg",
+        "type": "VENDOR",
+        "businessName": "Tech Trinkets",
+        "businessType": "ECommerce",
+        "createdAt": "2025-07-07T09:20:00Z",
+        "services": [
+            {
+                "id": "svc-11",
+                "name": "Phone Case",
+                "price": 1200,
+                "imageUrl": "/images/phonecase.jpg",
+                "createdAt": "2025-07-07T09:20:00Z"
+            }
+        ]
+    },
+    {
+        "id": "acc-10",
+        "name": "Bowen Bakes",
+        "email": "bowenbakes@example.com",
+        "phoneNumber": "+2348012345680",
+        "avatarUrl": "/images/placeholder.jpg",
+        "type": "VENDOR",
+        "businessName": "Bowen Bakes",
+        "businessType": "ECommerce",
+        "createdAt": "2025-07-07T09:30:00Z",
+        "services": [
+            {
+                "id": "svc-12",
+                "name": "Red Velvet Cupcake",
+                "price": 1000,
+                "imageUrl": "/images/cake.jpg",
+                "createdAt": "2025-07-07T09:30:00Z"
+            }
+        ]
+    }
+]
