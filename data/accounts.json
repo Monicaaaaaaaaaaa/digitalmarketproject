@@ -114,7 +114,7 @@
         "avatarUrl": "/images/placeholder.jpg",
         "type": "VENDOR",
         "businessName": "Campus Threads",
-        "businessType": "ECommerce",
+        "businessType": "LocalProducts",
         "createdAt": "2025-07-07T08:50:00Z",
         "services": [
             {
@@ -141,7 +141,7 @@
         "avatarUrl": "/images/placeholder.jpg",
         "type": "VENDOR",
         "businessName": "Green Pantry",
-        "businessType": "ECommerce",
+        "businessType": "LocalProducts",
         "createdAt": "2025-07-07T09:00:00Z",
         "services": [
             {
@@ -161,7 +161,7 @@
         "avatarUrl": "/images/placeholder.jpg",
         "type": "VENDOR",
         "businessName": "Crafty Hands",
-        "businessType": "ECommerce",
+        "businessType": "LocalProducts",
         "createdAt": "2025-07-07T09:10:00Z",
         "services": [
             {
@@ -181,7 +181,7 @@
         "avatarUrl": "/images/placeholder.jpg",
         "type": "VENDOR",
         "businessName": "Tech Trinkets",
-        "businessType": "ECommerce",
+        "businessType": "LocalProducts",
         "createdAt": "2025-07-07T09:20:00Z",
         "services": [
             {
@@ -201,7 +201,7 @@
         "avatarUrl": "/images/placeholder.jpg",
         "type": "VENDOR",
         "businessName": "Bowen Bakes",
-        "businessType": "ECommerce",
+        "businessType": "LocalProducts",
         "createdAt": "2025-07-07T09:30:00Z",
         "services": [
             {

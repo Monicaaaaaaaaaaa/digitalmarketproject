@@ -6,7 +6,8 @@
 
   const vendorsStore = useVendorsStore();
   const vendor = vendorsStore.getVendorByEmail(email);
-  const { isAuthenticated } = useAppSession();
+  const sessionStore = useAppSession();
+  const isAuthenticated = computed(() => sessionStore.isAuthenticated.value);
 
   const showBookingSection = ref(false);
   const isBooking = ref(false);
@@ -139,7 +140,7 @@
       <section class="vendor-details fade-in">
         <img
           id="vendor-image"
-          :src="vendor?.avatarUrl"
+          :src="vendor?.avatarUrl ?? '/images/placeholder.jpg'"
           alt="Vendor banner"
           style="max-height: 250px; object-fit: cover"
         />

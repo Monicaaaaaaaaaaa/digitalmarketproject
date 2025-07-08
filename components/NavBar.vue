@@ -1,14 +1,24 @@
 <script lang="ts" setup>
-  import { AppRoute } from "~/utils/constants";
-  import ModalComponent from "./ModalComponent.vue";
-
   const currentTabIndex = ref(0);
   const showLogin = ref(false);
   const showSignup = ref(false);
   const showForgot = ref(false);
-  const { isAuthenticated } = useAppSession();
+
+  const sessionStore = useAppSession();
+  const isAuthenticated = ref(false);
+
+  function logout() {
+    sessionStore.clearSession();
+    navigateTo(AppRoute.home);
+  }
 
   const route = useRoute();
+  watch(
+    () => sessionStore.session, // Watch state
+    (newPath) => {},
+    { immediate: true } // Run immediately on component mount
+  );
+
   watch(
     () => route.path, // Watch the current route path
     (newPath) => {
@@ -63,21 +73,23 @@
           <a
             class="btn-login"
             @click="
-              {
-                if (isAuthenticated) {
-                  navigateTo(AppRoute.profile);
-                } else [(showLogin = true)];
-              }
+              sessionStore.isAuthenticated.value
+                ? navigateTo(AppRoute.profile)
+                : (showLogin = true)
             "
           >
-            {{ isAuthenticated ? "Profile" : "Login" }}
+            {{ sessionStore.isAuthenticated.value ? "Profile" : "Login" }}
           </a>
+
           <a
-            v-if="!isAuthenticated"
             class="btn-signup"
-            @click="showSignup = true"
+            @click="
+              sessionStore.isAuthenticated.value
+                ? logout()
+                : (showSignup = true)
+            "
           >
-            Sign Up
+            {{ sessionStore.isAuthenticated.value ? "Logout" : "   Sign Up" }}
           </a>
         </li>
 

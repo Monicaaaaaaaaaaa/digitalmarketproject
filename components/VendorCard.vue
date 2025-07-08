@@ -1,7 +1,10 @@
 <template>
   <div class="vendor-card">
     <div class="vendor-image">
-      <img :src="vendor.avatarUrl" :alt="vendor.name" />
+      <img
+        :src="vendor.avatarUrl ?? '/images/placeholder.jpg'"
+        :alt="vendor.name"
+      />
       <div class="vendor-badge">{{ vendor.rating }}</div>
     </div>
     <div class="vendor-details">
