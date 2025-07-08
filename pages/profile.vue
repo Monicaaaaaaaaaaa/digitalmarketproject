@@ -1,11 +1,13 @@
 <script lang="ts" setup>
+  import { watch } from "vue";
+
   definePageMeta({ layout: "profile" });
 
   const accountStore = useAccountStore();
   const vendorStore = useVendorsStore();
   const { account } = storeToRefs(accountStore);
 
-  const isVendor = computed(() => account.value?.businessName);
+  const isVendor = computed(() => account.value?.type == "Vendor");
 
   // Appointments
   const rawAppointments = computed(() =>
@@ -72,6 +74,95 @@
     }
   }
 
+  // Profile update state
+  const profileForm = ref({
+    name: "",
+    email: "",
+    phone: "",
+  });
+
+  // Pre-fill profile form when account data is available
+  watch(
+    account,
+    (newAccount) => {
+      if (newAccount) {
+        profileForm.value = {
+          name: newAccount.name || "",
+          email: newAccount.email || "",
+          phone: newAccount.phoneNumber || "",
+        };
+      }
+    },
+    { immediate: true }
+  );
+
+  const profileUpdateStatus = ref<"idle" | "loading" | "success" | "error">(
+    "idle"
+  );
+
+  async function updateAccount() {
+    profileUpdateStatus.value = "loading";
+    const response = await accountStore.updateAccount({
+      name: profileForm.value.name,
+      email: profileForm.value.email,
+      phone: profileForm.value.phone,
+    });
+    if (response.ok === false || response.error != null) {
+      profileUpdateStatus.value = "error";
+      return;
+    }
+    profileUpdateStatus.value = "success";
+    try {
+      await accountStore.fetchAccount();
+    } catch (error) {
+      console.error("Failed to update account:", error);
+      profileUpdateStatus.value = "error";
+    }
+  }
+
+  // Service creation state (Vendor only)
+  const serviceForm = ref({
+    name: "",
+    price: "",
+    imageUrl: "",
+  });
+
+  const serviceCreationStatus = ref<"idle" | "loading" | "success" | "error">(
+    "idle"
+  );
+
+  // Handle file selection for service image
+  function handleImageSelect(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      // Create a local URL for the selected file
+      serviceForm.value.imageUrl = URL.createObjectURL(file);
+    }
+  }
+
+  async function createService() {
+    if (!isVendor.value) return;
+    serviceCreationStatus.value = "loading";
+    const response = await vendorStore.createService({
+      name: serviceForm.value.name,
+      price: parseFloat(serviceForm.value.price),
+      imageUrl: serviceForm.value.imageUrl,
+    });
+    if (response.ok === false || response.error != null) {
+      serviceCreationStatus.value = "error";
+      return;
+    }
+    serviceCreationStatus.value = "success";
+    serviceForm.value = { name: "", price: "", imageUrl: "" };
+    try {
+      await accountStore.fetchAccount();
+    } catch (error) {
+      console.error("Failed to create service:", error);
+      serviceCreationStatus.value = "error";
+    }
+  }
+
   // Navigation
   const goToVendors = () => navigateTo(AppRoute.vendors);
   accountStore.fetchAccount();
@@ -99,9 +190,6 @@
           </p>
         </div>
       </div>
-      <!-- <button class="btn-secondary" @click="goToProfile">
-        ⚙️ Profile Settings
-      </button> -->
     </header>
 
     <!-- Vendor Stats -->
@@ -127,6 +215,30 @@
         <div class="stat-card">
           <h3>⭐ {{ vendorStats.rating }}</h3>
           <p>Rating</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Vendor Services (for vendors only) -->
+    <section
+      v-if="isVendor && account?.services?.length"
+      class="services-section"
+    >
+      <h2>Your Services</h2>
+      <div class="services-grid">
+        <div
+          v-for="service in account.services"
+          :key="service.id"
+          class="service-card"
+        >
+          <img :src="service.imageUrl" :alt="service.name" />
+          <div class="service-info">
+            <h4>{{ service.name }}</h4>
+            <p class="price">₦{{ service.price.toLocaleString() }}</p>
+            <p class="created-at">
+              Created: {{ formatDate(service.createdAt) }}
+            </p>
+          </div>
         </div>
       </div>
     </section>
@@ -196,8 +308,8 @@
             </div>
             <div class="appointment-details">
               <p v-if="isVendor">
-                <strong> Name:</strong> {{ appointment.user?.name }} <br />
-                <strong> Phone:</strong>
+                <strong>Name:</strong> {{ appointment.user?.name }} <br />
+                <strong>Phone:</strong>
                 {{ appointment.user?.phoneNumber }}
               </p>
             </div>
@@ -217,24 +329,108 @@
       </div>
     </section>
 
-    <!-- Vendor Services (for vendors only) -->
-    <section
-      v-if="isVendor && account?.services?.length"
-      class="services-section"
-    >
-      <h2>Your Services</h2>
-      <div class="services-grid">
-        <div
-          v-for="service in account.services"
-          :key="service.id"
-          class="service-card"
-        >
-          <img :src="service.imageUrl" :alt="service.name" />
-          <div class="service-info">
-            <h4>{{ service.name }}</h4>
-            <p class="price">₦{{ service.price.toLocaleString() }}</p>
-          </div>
+    <!-- Profile Update Section -->
+    <section class="profile-update-section">
+      <h2>Update Profile</h2>
+      <div class="profile-form">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input
+            id="name"
+            v-model="profileForm.name"
+            type="text"
+            placeholder="Enter
+
+ your name"
+          />
         </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            v-model="profileForm.email"
+            type="email"
+            placeholder="Enter your email"
+          />
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone</label>
+          <input
+            id="phone"
+            v-model="profileForm.phone"
+            type="tel"
+            placeholder="Enter your phone number"
+          />
+        </div>
+        <button
+          class="btn-primary"
+          :disabled="profileUpdateStatus === 'loading'"
+          @click="updateAccount"
+        >
+          {{
+            profileUpdateStatus === "loading" ? "Updating..." : "Update Profile"
+          }}
+        </button>
+        <p v-if="profileUpdateStatus === 'success'" class="success-message">
+          Profile updated successfully!
+        </p>
+        <p v-if="profileUpdateStatus === 'error'" class="error-message">
+          Failed to update profile. Please try again.
+        </p>
+      </div>
+    </section>
+
+    <!-- Create Service Section (Vendor only) -->
+    <section v-if="isVendor" class="create-service-section">
+      <h2>Create New Service</h2>
+      <div class="service-form">
+        <div class="form-group">
+          <label for="serviceName">Service Name</label>
+          <input
+            id="serviceName"
+            v-model="serviceForm.name"
+            type="text"
+            placeholder="Enter service name"
+          />
+        </div>
+        <div class="form-group">
+          <label for="servicePrice">Price (₦)</label>
+          <input
+            id="servicePrice"
+            v-model="serviceForm.price"
+            type="number"
+            placeholder="Enter price"
+          />
+        </div>
+        <div class="form-group">
+          <label for="serviceImage">Service Image</label>
+          <input
+            id="serviceImage"
+            type="file"
+            accept="image/*"
+            @change="handleImageSelect"
+          />
+          <p v-if="serviceForm.imageUrl" class="image-preview">
+            Selected: {{ serviceForm.imageUrl }}
+          </p>
+        </div>
+        <button
+          class="btn-primary"
+          :disabled="serviceCreationStatus === 'loading'"
+          @click="createService"
+        >
+          {{
+            serviceCreationStatus === "loading"
+              ? "Creating..."
+              : "Create Service"
+          }}
+        </button>
+        <p v-if="serviceCreationStatus === 'success'" class="success-message">
+          Service created successfully!
+        </p>
+        <p v-if="serviceCreationStatus === 'error'" class="error-message">
+          Failed to create service. Please try again.
+        </p>
       </div>
     </section>
 
@@ -299,6 +495,60 @@
     margin: 0;
   }
 
+  .profile-update-section,
+  .create-service-section {
+    margin-bottom: 2rem;
+  }
+
+  .profile-form,
+  .service-form {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: grid;
+    gap: 1rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-group label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+  }
+
+  .form-group input {
+    padding: 0.75rem;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+
+  .form-group input[type="file"] {
+    padding: 0.5rem;
+  }
+
+  .image-preview {
+    margin-top: 0.5rem;
+    color: #6c757d;
+    font-size: 0.9rem;
+    word-break: break-all;
+  }
+
+  .success-message {
+    color: #28a745;
+    margin-top: 0.5rem;
+  }
+
+  .error-message {
+    color: #dc3545;
+    margin-top: 0.5rem;
+  }
+
   .stats-section {
     margin-bottom: 2rem;
   }
@@ -327,17 +577,6 @@
   .stat-card p {
     margin: 0;
     color: #6c757d;
-  }
-
-  .quick-actions {
-    margin-bottom: 2rem;
-  }
-
-  .action-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 1rem;
   }
 
   .appointments-section {
@@ -493,6 +732,12 @@
     margin: 0;
   }
 
+  .created-at {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin: 0.5rem 0 0;
+  }
+
   .account-info {
     margin-bottom: 2rem;
   }
@@ -510,8 +755,6 @@
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
-
-  /* Removed problematic fade-in animation */
 
   .btn-primary {
     background: #007bff;
@@ -561,6 +804,11 @@
 
     .stats-grid {
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .profile-form,
+    .service-form {
+      grid-template-columns: 1fr;
     }
   }
 </style>

@@ -62,7 +62,7 @@
     name: "",
     email: "",
     phone: "",
-    role: "customer",
+    role: "Customer",
     businessName: "",
     businessType: "",
     password: "",
@@ -82,11 +82,10 @@
     loginState.value.success = false;
 
     try {
-      let role: AccountType = login.value.role == "Vendor" ? "VENDOR" : "USER";
       let response = await authStore.login({
         phoneNumberOrEmail: login.value.email,
         password: login.value.password,
-        role: role,
+        role: login.value.role as AccountType,
       });
 
       if (!response.ok || response.error) {
@@ -108,7 +107,7 @@
         };
         loginState.value.success = false;
         navigateTo(AppRoute.profile);
-      }, 1500);
+      }, 500);
     } catch (error) {
       loginState.value.error = "Network error. Please check your connection.";
     } finally {
@@ -130,15 +129,15 @@
         return;
       }
 
-      // Validate vendor fields
-      if (signup.value.role === "vendor" && !signup.value.businessName) {
-        signupState.value.error = "Business name is required for vendors.";
+      // Validate Vendor fields
+      if (signup.value.role === "Vendor" && !signup.value.businessName) {
+        signupState.value.error = "Business name is required for Vendors.";
         signupState.value.loading = false;
         return;
       }
 
       // Simulate API call (replace with actual signup logic)
-      let type: AccountType = signup.value.role == "Vendor" ? "VENDOR" : "USER";
+
       let businessType: BusinessType =
         signup.value.businessType == "Beauty Professional"
           ? "BeautyProfessional"
@@ -151,7 +150,7 @@
         businessName: signup.value.businessName,
         phoneNumber: signup.value.phone,
         businessType: businessType,
-        type: type,
+        type: signup.value.role,
       });
 
       if (!response.ok || response.error) {
@@ -169,7 +168,7 @@
           name: "",
           email: "",
           phone: "",
-          role: "customer",
+          role: "Customer",
           businessName: "",
           businessType: "",
           password: "",
@@ -178,7 +177,7 @@
         };
         signupState.value.success = false;
         navigateTo(AppRoute.profile);
-      }, 1500);
+      }, 500);
     } catch (error) {
       signupState.value.error = "Signup failed. Please try again.";
     } finally {
@@ -272,8 +271,8 @@
               required
             >
               <option value="">Select role</option>
-              <option value="vendor">Vendor</option>
-              <option value="customer">Customer</option>
+              <option value="Vendor">Vendor</option>
+              <option value="Customer">Customer</option>
             </select>
           </div>
           <div class="form-options">
@@ -379,16 +378,16 @@
         <div class="user-type-selector">
           <div
             class="user-type"
-            :class="{ active: signup.role === 'customer' }"
-            @click="signup.role = 'customer'"
+            :class="{ active: signup.role === 'Customer' }"
+            @click="signup.role = 'Customer'"
           >
             <i class="fas fa-user"></i>
             <span>Customer</span>
           </div>
           <div
             class="user-type"
-            :class="{ active: signup.role === 'vendor' }"
-            @click="signup.role = 'vendor'"
+            :class="{ active: signup.role === 'Vendor' }"
+            @click="signup.role = 'Vendor'"
           >
             <i class="fas fa-store"></i>
             <span>Vendor</span>
@@ -425,7 +424,7 @@
               />
             </div>
           </div>
-          <div class="form-group" v-if="signup.role === 'vendor'">
+          <div class="form-group" v-if="signup.role === 'Vendor'">
             <label>Business Name</label>
             <input
               type="text"
@@ -433,7 +432,7 @@
               :disabled="signupState.loading"
             />
           </div>
-          <div class="form-group" v-if="signup.role === 'vendor'">
+          <div class="form-group" v-if="signup.role === 'Vendor'">
             <label>Business Type</label>
             <select
               v-model="signup.businessType"

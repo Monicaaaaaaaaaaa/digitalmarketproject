@@ -21,7 +21,7 @@
           </p>
         </div>
         <div class="about-image">
-          <img src="/images/ceo.jpeg" alt="About BowenMarket" />
+          <img src="/images/campuscart logo.jpg" alt="About BowenMarket" />
         </div>
       </div>
     </section>

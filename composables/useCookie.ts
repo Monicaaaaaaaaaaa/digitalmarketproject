@@ -9,14 +9,19 @@ interface SessionOptions {
 const LOCAL_STORAGE_KEY = "user_session";
 
 export const useAppSession = () => {
-  const apiClient = useApiClient();
-
   const getStoredSession = (): UserSession | null => {
     const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!raw) return null;
     try {
-      return JSON.parse(raw) as UserSession;
+      const session = JSON.parse(raw) as UserSession;
+      // Check if session is expired
+      if (new Date(session.expiresIn).getTime() <= Date.now()) {
+        localStorage.removeItem(LOCAL_STORAGE_KEY);
+        return null;
+      }
+      return session;
     } catch {
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
       return null;
     }
   };
@@ -37,7 +42,19 @@ export const useAppSession = () => {
   });
 
   const isAuthenticated = computed(() => {
-    if (session.value) return true;
+    if (!session.value) return false;
+
+    // Check if session is expired
+    const expiresIn = new Date(session.value.expiresIn).getTime();
+    const now = Date.now();
+
+    if (expiresIn <= now) {
+      // Session expired, clear it
+      session.value = null;
+      return false;
+    }
+
+    return true;
   });
 
   const updateSession = (newSession: UserSession | null) => {
@@ -60,6 +77,16 @@ export const useAppSession = () => {
     const expiresIn = new Date(session.value.expiresIn).getTime();
     const now = Date.now();
     const thresholdMs = refreshThresholdMinutes * 60 * 1000;
+
+    // Check if session is expired
+    if (expiresIn <= now) {
+      session.value = null;
+      return {
+        ok: false,
+        data: undefined,
+        error: { message: "Session expired" },
+      };
+    }
 
     if (autoRefresh && expiresIn - now < thresholdMs) {
       // Optionally add refresh logic here

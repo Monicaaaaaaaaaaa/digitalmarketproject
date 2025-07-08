@@ -4,7 +4,7 @@ export type Account = {
   email?: string;
   phoneNumber: string;
   avatarUrl?: string;
-  type: "USER" | "VENDOR";
+  type: "Customer" | "Vendor";
   businessName?: string;
   businessType?: BusinessType;
   createdAt: Date;

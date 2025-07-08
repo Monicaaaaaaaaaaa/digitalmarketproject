@@ -110,6 +110,34 @@ export const useVendorsStore = defineStore("vendors", () => {
     return ApiResponse.success(newAppointment);
   }
 
+  async function createService({
+    name,
+    price,
+    imageUrl,
+  }: {
+    name: string;
+    price: number;
+    imageUrl: string;
+  }): Promise<ApiResponse> {
+    const response = await makeAuthenticatedRequest<Appointment>({
+      endPoint: "/vendor/service",
+      isMultipart: false,
+      method: Method.POST,
+      body: {
+        name: name,
+        imageUrl: imageUrl,
+        price: price,
+      },
+    });
+
+    if (!response.ok || !response.data) {
+      return ApiResponse.error(response.error?.message);
+    }
+
+    loadSystemVendors();
+    return ApiResponse.success(true);
+  }
+
   function getVendorByEmail(email: string): Account | undefined {
     return vendors.value.find((v) => v.email == email);
   }
@@ -120,6 +148,7 @@ export const useVendorsStore = defineStore("vendors", () => {
     categoryOptions,
     filteredVendors,
     searchQuery,
+    createService,
     getVendorByEmail,
     bookAppointment,
     closeAppointment,

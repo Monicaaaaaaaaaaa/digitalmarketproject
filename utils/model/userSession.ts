@@ -10,5 +10,5 @@ export interface UserSession {
 }
 
 type SessionType = "UserSession" | "AuthOtpSession";
-export type AccountType = "USER" | "VENDOR";
+export type AccountType = "Customer" | "Vendor";
 export type BusinessType = "All" | "BeautyProfessional" | "LocalProducts";

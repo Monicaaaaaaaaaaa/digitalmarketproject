@@ -19,7 +19,7 @@ export const useAuthStore = defineStore("authentication", () => {
   }: {
     phoneNumberOrEmail: string;
     password: string;
-    role: AccountType;
+    role: string;
   }): Promise<ApiResponse<UserSession>> {
     resetState();
     isLoading.value = true;
@@ -62,7 +62,7 @@ export const useAuthStore = defineStore("authentication", () => {
     phoneNumber: string;
     businessName: string;
     businessType: BusinessType;
-    type: AccountType;
+    type: string;
   }): Promise<ApiResponse<UserSession>> {
     resetState();
     isLoading.value = true;
