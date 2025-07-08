@@ -107,6 +107,7 @@
           remember: false,
         };
         loginState.value.success = false;
+        navigateTo(AppRoute.profile);
       }, 1500);
     } catch (error) {
       loginState.value.error = "Network error. Please check your connection.";
@@ -176,6 +177,7 @@
           terms: false,
         };
         signupState.value.success = false;
+        navigateTo(AppRoute.profile);
       }, 1500);
     } catch (error) {
       signupState.value.error = "Signup failed. Please try again.";

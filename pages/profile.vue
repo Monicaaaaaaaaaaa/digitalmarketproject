@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-  definePageMeta({ layout: "default" });
+  definePageMeta({ layout: "profile" });
 
   const accountStore = useAccountStore();
   const vendorStore = useVendorsStore();
   const { account } = storeToRefs(accountStore);
 
-  const isVendor = computed(() => account.value?.type === "VENDOR");
+  const isVendor = computed(() => account.value?.businessName);
 
   // Appointments
   const rawAppointments = computed(() =>
@@ -74,10 +74,16 @@
 
   // Navigation
   const goToVendors = () => navigateTo(AppRoute.vendors);
+  accountStore.fetchAccount();
 </script>
 
 <template>
   <div class="dashboard-container">
+    <header class="profile-header">
+      <button id="backToDashboardBtn" class="btn-secondary" @click="goBack">
+        🔙 Dashboard
+      </button>
+    </header>
     <!-- Header -->
     <header class="dashboard-header">
       <div class="user-info">

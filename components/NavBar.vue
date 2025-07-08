@@ -6,7 +6,8 @@
   const showLogin = ref(false);
   const showSignup = ref(false);
   const showForgot = ref(false);
-  const { isAuthenticated } = useAppSession();
+  const sessionStore = useAppSession();
+  const isAuthenticated = computed(() => sessionStore.isAuthenticated.value);
 
   const route = useRoute();
   watch(

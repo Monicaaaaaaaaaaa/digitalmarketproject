@@ -94,6 +94,8 @@ export const useAuthStore = defineStore("authentication", () => {
     };
     userSession.value = userSessionData;
 
+    sessionManger.updateSession(userSessionData);
+
     return response;
   }
 
