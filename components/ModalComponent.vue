@@ -439,8 +439,8 @@
               :disabled="signupState.loading"
             >
               <option value="">Select business type</option>
-              <option value="beauty">Beauty Professional</option>
-              <option value="Local products">Local Products</option>
+              <option value="Beauty Professional">Beauty Professional</option>
+              <option value="Local Products">Local Products</option>
             </select>
           </div>
           <div class="form-row">
