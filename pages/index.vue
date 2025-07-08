@@ -1,6 +1,16 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+  const showLogin = ref(false);
+  const showSignup = ref(false);
+  const showForgot = ref(false);
+</script>
 
 <template>
+  <ModalComponent
+    v-model:showLogin="showLogin"
+    v-model:showSignup="showSignup"
+    v-model:showForgot="showForgot"
+  />
+
   <div>
     <section class="hero" id="home">
       <div class="container">
@@ -11,8 +21,15 @@
             entrepreneurs—all in one place.
           </p>
           <div class="hero-buttons">
-            <a href="#" class="btn-primary" id="showSignupModal">Get Started</a>
-            <a href="vendors.html" class="btn-secondary">Explore Vendors</a>
+            <a
+              @click="showLogin = true"
+              class="btn-primary"
+              id="showSignupModal"
+              >Get Started</a
+            >
+            <a :href="AppRoute.vendors" class="btn-secondary"
+              >Explore Vendors</a
+            >
           </div>
         </div>
         <div class="hero-image">
@@ -65,10 +82,13 @@
             business.
           </p>
           <div class="cta-buttons">
-            <a href="#" class="btn-primary" id="showSignupModalCta"
+            <a
+              @click="showSignup = true"
+              class="btn-primary"
+              id="showSignupModalCta"
               >Sign Up Now</a
             >
-            <a href="about.html" class="btn-outline">Learn More</a>
+            <a :href="AppRoute.vendors" class="btn-outline">Learn More</a>
           </div>
         </div>
       </div>
