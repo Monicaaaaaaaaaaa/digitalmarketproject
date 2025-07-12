@@ -2,6 +2,7 @@ export type Account = {
   id: string;
   name: string;
   email?: string;
+  isSuspended: boolean;
   phoneNumber: string;
   avatarUrl?: string;
   type: "Customer" | "Vendor";
